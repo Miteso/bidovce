@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objednávky – tlač</title>
+<style>
+  :root { --bg:#f6f4f1; --card:#fff; --fg:#1f1a17; --muted:#6d625b; --line:#e2dbd4; --accent:#b8401f; --ok:#2f7a3d; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.45 system-ui, -apple-system, sans-serif; }
+  .wrap { max-width:720px; margin:0 auto; padding:24px 16px 48px; display:flex; flex-direction:column; gap:16px; }
+  h1 { font-size:26px; margin:0; }
+  .bar { display:flex; flex-wrap:wrap; gap:10px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .dot { width:12px; height:12px; border-radius:50%; background:#bbb; flex:none; }
+  .dot.on { background:var(--ok); box-shadow:0 0 0 4px #2f7a3d22; }
+  .dot.err { background:var(--accent); }
+  #stav { flex:1; min-width:180px; }
+  button { font:inherit; font-weight:600; border:0; border-radius:10px; padding:10px 16px; cursor:pointer; background:var(--fg); color:#fff; }
+  button.sec { background:transparent; color:var(--fg); border:1px solid var(--line); }
+  .big { font-size:20px; padding:16px 22px; background:var(--accent); }
+  .help { color:var(--muted); font-size:14px; }
+  .obj { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:8px; }
+  .obj.new { border-color:var(--accent); box-shadow:0 0 0 3px #b8401f22; }
+  .obj pre { margin:0; font:15px/1.4 ui-monospace, Menlo, monospace; white-space:pre-wrap; }
+  .obj .row { display:flex; justify-content:space-between; gap:10px; align-items:center; }
+  .muted { color:var(--muted); font-size:14px; }
+  #tlac { display:none; }
+  @media print {
+    body { background:#fff; }
+    .wrap { display:none; }
+    #tlac { display:block; }
+    #tlac pre { font:16pt/1.35 Menlo, monospace; white-space:pre-wrap; margin:0; page-break-after:always; }
+    @page { margin:12mm; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Objednávky – tlač</h1>
+  <div class="bar">
+    <span class="dot" id="dot"></span>
+    <span id="stav">Stránka čaká na spustenie.</span>
+    <button class="big" id="start">Spustiť príjem</button>
+  </div>
+  <p class="help">Nechajte túto stránku otvorenú. Každých 10 sekúnd skontroluje nové objednávky. Keď príde nová, zapípa a otvorí okno tlače – kliknite <b>Tlačiť</b>.</p>
+  <div id="zoznam"></div>
+</div>
+<div id="tlac"></div>
+
+<script>
+const API = "https://ianslaoxiuwoztwqqkyk.supabase.co/functions/v1/objednavky";
+const kluc = new URLSearchParams(location.search).get("k") || "";
+const $ = (id) => document.getElementById(id);
+let bezi = false, audio = null, zoznam = [];
+
+function stav(text, typ) {
+  $("stav").textContent = text;
+  $("dot").className = "dot" + (typ ? " " + typ : "");
+}
+
+function pipni() {
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.25, 0.5].forEach((t) => {
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.frequency.value = 880; o.connect(g); g.connect(audio.destination);
+      g.gain.setValueAtTime(0.25, audio.currentTime + t);
+      g.gain.exponentialRampToValueAtTime(0.001, audio.currentTime + t + 0.2);
+      o.start(audio.currentTime + t); o.stop(audio.currentTime + t + 0.22);
+    });
+  } catch (e) {}
+}
+
+function vykresli(nove) {
+  const ids = new Set(nove.map((o) => o.id));
+  $("zoznam").innerHTML = "";
+  zoznam.slice(0, 30).forEach((o) => {
+    const d = document.createElement("div");
+    d.className = "obj" + (ids.has(o.id) ? " new" : "");
+    const row = document.createElement("div"); row.className = "row";
+    const h = document.createElement("b"); h.textContent = "Objednávka č. " + o.cislo;
+    const b = document.createElement("button"); b.className = "sec"; b.textContent = "Tlačiť znova";
+    b.onclick = () => tlac([o]);
+    row.append(h, b);
+    const pre = document.createElement("pre"); pre.textContent = o.blocek;
+    d.append(row, pre);
+    $("zoznam").append(d);
+  });
+}
+
+function tlac(obj) {
+  const t = $("tlac"); t.innerHTML = "";
+  obj.forEach((o) => { const p = document.createElement("pre"); p.textContent = o.blocek; t.append(p); });
+  setTimeout(() => window.print(), 300);
+}
+
+async function kontrola() {
+  try {
+    const r = await fetch(API + "?k=" + encodeURIComponent(kluc) + "&nove=1", { cache: "no-store" });
+    const d = await r.json();
+    if (!r.ok || !d.ok) { stav("Chyba: " + (d.chyba || r.status) + ". Skontrolujte odkaz.", "err"); return; }
+    const cas = new Date().toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+    if (d.objednavky.length) {
+      zoznam = d.objednavky.slice().reverse().concat(zoznam);
+      vykresli(d.objednavky);
+      stav("Nová objednávka! (" + cas + ")", "on");
+      pipni();
+      tlac(d.objednavky);
+    } else {
+      stav("Pripojené – čakám na objednávky. Posledná kontrola " + cas, "on");
+    }
+  } catch (e) {
+    stav("Nedá sa pripojiť na internet. Skúšam znova…", "err");
+  }
+}
+
+$("start").onclick = () => {
+  if (!kluc) { stav("V odkaze chýba kľúč pizzerie.", "err"); return; }
+  if (bezi) return;
+  bezi = true; pipni();
+  $("start").textContent = "Príjem beží"; $("start").disabled = true;
+  kontrola(); setInterval(kontrola, 10000);
+};
+</script>
+</body>
+</html>
