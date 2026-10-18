@@ -30,6 +30,7 @@
   <button id="start">Spustiť príjem</button>
   <label><input type="checkbox" id="auto" checked> Tlačiť nové objednávky automaticky</label>
   <button class="sec" id="test">Skúšobný bloček</button>
+  <p class="help" id="ios" hidden><b>iPhone:</b> automatická tlač tu nefunguje. Pri objednávke ťuknite na „Vytlačiť“ a v ponuke Zdieľať vyberte aplikáciu vašej tlačiarne.</p>
   <p class="help">Nechajte stránku otvorenú a obrazovku zapnutú. Každých 10 sekúnd sa pozrie na nové objednávky. Keď príde nová, zapípa a pošle ju na tlačiareň cez aplikáciu RawBT. Ak sa nevytlačí sama, ťuknite na „Vytlačiť“.</p>
   <div id="zoznam"></div>
 </div>
@@ -49,7 +50,13 @@ function pipni() {
     if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
   } catch (e) {}
 }
-function tlac(text) {
+const ANDROID = /android/i.test(navigator.userAgent);
+async function tlac(text) {
+  if (!ANDROID) {
+    try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { return; }
+    try { await navigator.clipboard.writeText(text); stav("Bloček je skopírovaný – vložte ho do aplikácie tlačiarne.", "on"); } catch (e) {}
+    return;
+  }
   const b64 = btoa(unescape(encodeURIComponent(text + "\n\n\n")));
   location.href = "intent:base64," + b64 + "#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;";
 }
@@ -69,7 +76,7 @@ async function kontrola() {
     if (d.objednavky.length) {
       d.objednavky.forEach(o => karta(o, true));
       pipni(); stav("Nová objednávka! " + cas, "on");
-      if ($("auto").checked) tlac(d.objednavky.map(o => o.blocek).join("\n"));
+      if ($("auto").checked && ANDROID) tlac(d.objednavky.map(o => o.blocek).join("\n"));
     } else stav("Pripojené – čakám na objednávky (" + cas + ")", "on");
   } catch (e) { stav("Nie je internet, skúšam znova…", "err"); }
 }
@@ -81,6 +88,7 @@ $("start").onclick = async () => {
   $("start").textContent = "Príjem beží"; $("start").disabled = true;
   kontrola(); setInterval(kontrola, 10000);
 };
+if (!ANDROID) $("ios").hidden = false;
 $("test").onclick = () => tlac("================================\nSKUSOBNY BLOCEK\nMiteso - tlaciaren funguje\n================================");
 </script>
 </body>
