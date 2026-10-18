@@ -57,8 +57,7 @@ async function tlac(text) {
     try { await navigator.clipboard.writeText(text); stav("Bloček je skopírovaný – vložte ho do aplikácie tlačiarne.", "on"); } catch (e) {}
     return;
   }
-  const b64 = btoa(unescape(encodeURIComponent(text + "\n\n\n")));
-  location.href = "intent:base64," + b64 + "#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;";
+  location.href = "intent:" + encodeURI(text + "\n\n\n") + "#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;";
 }
 function karta(o, nova) {
   const d = document.createElement("div"); d.className = "obj" + (nova ? " new" : "");
