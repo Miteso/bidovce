@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Objednávky – tlačiareň</title>
+<style>
+  :root { --bg:#f6f4f1; --card:#fff; --fg:#1f1a17; --muted:#6d625b; --line:#e2dbd4; --accent:#b8401f; --ok:#2f7a3d; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.45 system-ui, sans-serif; }
+  .wrap { max-width:560px; margin:0 auto; padding:16px; display:flex; flex-direction:column; gap:14px; }
+  h1 { font-size:22px; margin:4px 0 0; }
+  .bar { display:flex; gap:10px; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; }
+  .dot { width:14px; height:14px; border-radius:50%; background:#bbb; flex:none; }
+  .dot.on { background:var(--ok); } .dot.err { background:var(--accent); }
+  button { font:inherit; font-weight:700; border:0; border-radius:12px; padding:14px 18px; background:var(--fg); color:#fff; width:100%; }
+  button.print { background:var(--accent); font-size:20px; padding:18px; }
+  button.sec { background:transparent; color:var(--fg); border:1px solid var(--line); font-weight:600; }
+  .obj { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; display:flex; flex-direction:column; gap:10px; }
+  .obj.new { border:2px solid var(--accent); }
+  pre { margin:0; font:14px/1.35 ui-monospace, monospace; white-space:pre-wrap; }
+  .help { color:var(--muted); font-size:15px; margin:0; }
+  label { display:flex; gap:10px; align-items:center; font-size:15px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Objednávky – tlačiareň</h1>
+  <div class="bar"><span class="dot" id="dot"></span><span id="stav">Kliknite na „Spustiť príjem“.</span></div>
+  <button id="start">Spustiť príjem</button>
+  <label><input type="checkbox" id="auto" checked> Tlačiť nové objednávky automaticky</label>
+  <button class="sec" id="test">Skúšobný bloček</button>
+  <p class="help">Nechajte stránku otvorenú a obrazovku zapnutú. Každých 10 sekúnd sa pozrie na nové objednávky. Keď príde nová, zapípa a pošle ju na tlačiareň cez aplikáciu RawBT. Ak sa nevytlačí sama, ťuknite na „Vytlačiť“.</p>
+  <div id="zoznam"></div>
+</div>
+<script>
+const API = "https://ianslaoxiuwoztwqqkyk.supabase.co/functions/v1/objednavky";
+const kluc = new URLSearchParams(location.search).get("k") || "";
+const $ = (id) => document.getElementById(id);
+let bezi = false, ac = null, zamok = null;
+
+function stav(t, typ) { $("stav").textContent = t; $("dot").className = "dot" + (typ ? " " + typ : ""); }
+function pipni() {
+  try {
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    [0, .25, .5].forEach(t => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = 900;
+      o.connect(g); g.connect(ac.destination); g.gain.setValueAtTime(.3, ac.currentTime + t);
+      g.gain.exponentialRampToValueAtTime(.001, ac.currentTime + t + .2); o.start(ac.currentTime + t); o.stop(ac.currentTime + t + .22); });
+    if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
+  } catch (e) {}
+}
+function tlac(text) {
+  const b64 = btoa(unescape(encodeURIComponent(text + "\n\n\n")));
+  location.href = "intent:base64," + b64 + "#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;";
+}
+function karta(o, nova) {
+  const d = document.createElement("div"); d.className = "obj" + (nova ? " new" : "");
+  const pre = document.createElement("pre"); pre.textContent = o.blocek;
+  const b = document.createElement("button"); b.className = "print"; b.textContent = "Vytlačiť č. " + o.cislo;
+  b.onclick = () => tlac(o.blocek);
+  d.append(b, pre); $("zoznam").prepend(d);
+}
+async function kontrola() {
+  try {
+    const r = await fetch(API + "?k=" + encodeURIComponent(kluc) + "&nove=1", { cache: "no-store" });
+    const d = await r.json();
+    if (!r.ok || !d.ok) { stav("Chyba: " + (d.chyba || r.status) + ". Skontrolujte odkaz.", "err"); return; }
+    const cas = new Date().toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" });
+    if (d.objednavky.length) {
+      d.objednavky.forEach(o => karta(o, true));
+      pipni(); stav("Nová objednávka! " + cas, "on");
+      if ($("auto").checked) tlac(d.objednavky.map(o => o.blocek).join("\n"));
+    } else stav("Pripojené – čakám na objednávky (" + cas + ")", "on");
+  } catch (e) { stav("Nie je internet, skúšam znova…", "err"); }
+}
+$("start").onclick = async () => {
+  if (!kluc) { stav("V odkaze chýba kľúč.", "err"); return; }
+  if (bezi) return; bezi = true; pipni();
+  try { zamok = await navigator.wakeLock.request("screen"); } catch (e) {}
+  document.addEventListener("visibilitychange", async () => { if (document.visibilityState === "visible" && bezi) { try { zamok = await navigator.wakeLock.request("screen"); } catch (e) {} } });
+  $("start").textContent = "Príjem beží"; $("start").disabled = true;
+  kontrola(); setInterval(kontrola, 10000);
+};
+$("test").onclick = () => tlac("================================\nSKUSOBNY BLOCEK\nMiteso - tlaciaren funguje\n================================");
+</script>
+</body>
+</html>
