@@ -17,7 +17,8 @@
   .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   button { font:inherit; border-radius:12px; padding:12px 10px; border:1px solid var(--line); background:var(--card); color:var(--fg); text-align:left; min-height:52px; }
   button.off { background:var(--red); border-color:var(--red); color:#fff; font-weight:700; }
-  button.off::after { content:" – VYPREDANÉ"; font-weight:400; font-size:13px; }
+  #zoznam button.off::after, #vlastne button.off::after { content:" – VYPREDANÉ"; font-weight:400; font-size:13px; }
+  #meskanie button { text-align:center; }
   .row { display:flex; gap:8px; }
   input { font:inherit; flex:1; padding:12px; border-radius:12px; border:1px solid var(--line); min-width:0; }
   .main { background:var(--fg); color:#fff; font-weight:700; text-align:center; }
@@ -26,9 +27,12 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Vypredané dnes</h1>
+  <h1>Obsluha – dnes</h1>
   <p class="help">Ťuknite na položku, ktorá sa minula – zčervená a agent ju zákazníkom prestane ponúkať. Ďalším ťuknutím ju vrátite. Zoznam sa každý deň sám vynuluje.</p>
   <div class="bar" id="stav">Načítavam…</div>
+  <h2>Meškanie dnes</h2>
+  <p class="help">Keď nestíhate, zvoľte o koľko dlhšie. Agent zákazníkom povie dlhší čas. Zajtra sa samo vynuluje.</p>
+  <div class="grid" id="meskanie"></div>
   <div id="zoznam"></div>
   <h2>Iné (napíšte)</h2>
   <div class="row"><input id="ine" placeholder="napr. šunka, Pepsi 2 l"><button class="main" id="pridaj" style="flex:none">Pridať</button></div>
@@ -46,6 +50,26 @@ const MENU = {
 };
 const vsetkyMenu = Object.values(MENU).flat();
 let vypredane = [];
+let meskanie = 0;
+const MESKANIA = [0, 15, 30, 45, 60, 90];
+function vykresliMeskanie() {
+  const g = $("meskanie"); g.innerHTML = "";
+  for (const m of MESKANIA) {
+    const b = document.createElement("button");
+    b.textContent = m === 0 ? "Bez meškania" : "+" + m + " min";
+    if (m === meskanie) b.className = m === 0 ? "main" : "off";
+    b.onclick = () => ulozMeskanie(m); g.append(b);
+  }
+}
+async function ulozMeskanie(m) {
+  const pred = meskanie; meskanie = m; vykresliMeskanie(); stav("Ukladám…");
+  try {
+    const r = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ meskanie: m }) });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.chyba || r.status);
+    stav(m ? "Uložené. Agent hovorí čas o " + m + " minút dlhší." : "Uložené. Bez meškania.", "ok");
+  } catch (e) { meskanie = pred; vykresliMeskanie(); stav("Nepodarilo sa uložiť (" + e.message + "). Skúste znova.", "err"); }
+}
 const $ = (id) => document.getElementById(id);
 function stav(t, typ) { $("stav").textContent = t; $("stav").className = "bar" + (typ ? " " + typ : ""); }
 
@@ -88,8 +112,8 @@ $("vsetko").onclick = () => { vypredane = []; vykresli(); uloz(); };
     const r = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { cache: "no-store" });
     const d = await r.json();
     if (!d.ok) throw new Error(d.chyba || r.status);
-    vypredane = d.vypredane || []; vykresli();
-    stav(vypredane.length ? "Dnes vypredané: " + vypredane.join(", ") : "Dnes je všetko k dispozícii.", "ok");
+    vypredane = d.vypredane || []; meskanie = Number(d.meskanie) || 0; vykresli(); vykresliMeskanie();
+    stav((vypredane.length ? "Dnes vypredané: " + vypredane.join(", ") : "Dnes je všetko k dispozícii.") + (meskanie ? " Meškanie +" + meskanie + " min." : ""), "ok");
   } catch (e) { stav("Chyba: " + e.message, "err"); }
 })();
 </script>
