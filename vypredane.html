@@ -30,6 +30,10 @@
   <h1>Obsluha – dnes</h1>
   <p class="help">Ťuknite na položku, ktorá sa minula – zčervená a agent ju zákazníkom prestane ponúkať. Ďalším ťuknutím ju vrátite. Zoznam sa každý deň sám vynuluje.</p>
   <div class="bar" id="stav">Načítavam…</div>
+  <h2>Odkaz pre agenta</h2>
+  <p class="help">Napíšte, čo má agent dnes zákazníkom hovoriť alebo dodržať. Napr. „Rozvoz do Kecerovíc dnes nerobíme“, „Doručenie dnes 90 minút“, „Minul sa ananás“. Zajtra sa samo vymaže.</p>
+  <textarea id="oznam" rows="3" maxlength="500" style="font:inherit;padding:12px;border-radius:12px;border:1px solid var(--line);width:100%"></textarea>
+  <div class="row"><button class="main" id="ulozOznam">Uložiť odkaz</button><button id="zmazOznam" style="flex:none">Vymazať</button></div>
   <h2>Meškanie dnes</h2>
   <p class="help">Keď nestíhate, zvoľte o koľko dlhšie. Agent zákazníkom povie dlhší čas. Zajtra sa samo vynuluje.</p>
   <div class="grid" id="meskanie"></div>
@@ -105,14 +109,26 @@ function prepni(p) {
   vykresli(); uloz();
 }
 $("pridaj").onclick = () => { const t = $("ine").value.trim(); if (!t) return; $("ine").value = ""; if (!vypredane.includes(t)) prepni(t); };
-$("vsetko").onclick = () => { vypredane = []; vykresli(); uloz(); };
+async function ulozOznam(t) {
+  stav("Ukladám odkaz…");
+  try {
+    const r = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ oznam: t }) });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.chyba || r.status);
+    $("oznam").value = t;
+    stav(t ? "Odkaz uložený. Agent ho použije od najbližšieho hovoru." : "Odkaz vymazaný.", "ok");
+  } catch (e) { stav("Nepodarilo sa uložiť odkaz (" + e.message + "). Skúste znova.", "err"); }
+}
+$("ulozOznam").onclick = () => ulozOznam($("oznam").value.trim());
+$("zmazOznam").onclick = () => ulozOznam("");
+$("vsetko").onclick =() => { vypredane = []; vykresli(); uloz(); };
 (async () => {
   if (!kluc) { stav("V odkaze chýba kľúč pizzerie.", "err"); return; }
   try {
     const r = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { cache: "no-store" });
     const d = await r.json();
     if (!d.ok) throw new Error(d.chyba || r.status);
-    vypredane = d.vypredane || []; meskanie = Number(d.meskanie) || 0; vykresli(); vykresliMeskanie();
+    vypredane = d.vypredane || []; meskanie = Number(d.meskanie) || 0; $("oznam").value = d.oznam || ""; vykresli(); vykresliMeskanie();
     stav((vypredane.length ? "Dnes vypredané: " + vypredane.join(", ") : "Dnes je všetko k dispozícii.") + (meskanie ? " Meškanie +" + meskanie + " min." : ""), "ok");
   } catch (e) { stav("Chyba: " + e.message, "err"); }
 })();
