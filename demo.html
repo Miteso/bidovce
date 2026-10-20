@@ -115,7 +115,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding-top:30px}
   <div class="hero">
     <section class="stage">
       <div>
-        <div class="eyebrow">Živá ukážka · menu Pizzérie Bidovce</div>
+        <div class="eyebrow">Živá ukážka · skutočné menu pizzerie</div>
         <h1>Telefón zdvihne vždy.<br><em>Objednávku vytlačí sama.</em></h1>
       </div>
       <p class="lead">Zavolajte si teraz, ako zákazník. Miteso prijme objednávku, overí adresu, spočíta cenu aj dopravu – a bloček vyjde v kuchyni.</p>
@@ -170,7 +170,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding-top:30px}
 
   <section class="more">
     <h2 class="sec-h">Už beží naostro</h2>
-    <p class="sec-p">Pizzéria Bidovce prijíma telefonické objednávky cez Miteso od októbra 2026.</p>
+    <p class="sec-p">Prvá pizzeria prijíma telefonické objednávky cez Miteso od októbra 2026.</p>
     <div class="proof">
       <div class="card"><b>20+</b><span>objednávok za prvý večer</span></div>
       <div class="card"><b>&lt;10 s</b><span>od potvrdenia po bloček</span></div>
@@ -368,13 +368,13 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding-top:30px}
 
   /* ---------- scripted demo (no mic) ---------- */
   const SCRIPT=[
-    ["agent","Dobrý deň, tu Pizzéria Bidovce. Čo si prosíte?",2300],
+    ["agent","Dobrý deň, tu pizzeria. Čo si prosíte?",2300],
     ["user","Dobrý deň, jednu veľkú Molly a jednu šunkovú.",2600],
     ["agent","Dobre, Molly veľká a šunková. Šunkovú chcete s kukuricou, alebo bez kukurice?",3200],
     ["user","Bez kukurice. A koľko stojí tá veľká Molly?",2400],
     ["agent","Veľká Molly stojí 17 eur. Rozvoz alebo osobný odber?",2600],
-    ["user","Rozvoz, Ďurkov, Bidovská 12.",2200],
-    ["agent","Ďurkov, Bidovská, jedna, dva. Sedí?",2200],
+    ["user","Rozvoz, Košice, Hlavná 12.",2200],
+    ["agent","Košice, Hlavná, jedna, dva. Sedí?",2200],
     ["user","Áno.",1100],
     ["agent","Na aké meno a budete platiť v hotovosti, kartou alebo stravnými lístkami?",3200],
     ["user","Novák, kartou.",1500],
@@ -382,14 +382,14 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding-top:30px}
     ["user","Hej.",1000],
     ["agent","Bude to všetko?",1400],
     ["user","Áno, to je všetko.",1500],
-    ["agent","Molly veľká a šunková bez kukurice na rozvoz, Ďurkov, Bidovská 12, kontakt na číslo, z ktorého voláte, potvrdzujete?",4200],
+    ["agent","Molly veľká a šunková bez kukurice na rozvoz, Košice, Hlavná 12, kontakt na číslo, z ktorého voláte, potvrdzujete?",4200],
     ["user","No.",1000],
     ["agent","Objednávka je prijatá. Spolu 26 eur 50 centov. U vás bude približne o 45 až 60 minút. Dobrú chuť.",3800]
   ];
   function demoTicket(){
     const now=new Date(), pad=n=>String(n).padStart(2,"0"), hm=d=>pad(d.getHours())+":"+pad(d.getMinutes());
     const dor=new Date(now.getTime()+60*60000);
-    return ["================================","PIZZERIA BIDOVCE","OBJEDNAVKA c. 101   "+pad(now.getDate())+". "+pad(now.getMonth()+1)+". "+hm(now),"================================","ROZVOZ","TEL: 0944054467","ADRESA: Durkov, Bidovska 12","MENO: Novak","DORUCIT DO: "+hm(dor),"--------------------------------","1x Molly 50cm - 17,00 EUR","1x Rodinna 33cm - 8,00 EUR","- bez kukurice (sunkova)","--------------------------------","POZNAMKA: PLATBA: KARTA","Doprava: 1,50 EUR","SPOLU: 26,50 EUR"].join("\n");
+    return ["================================","PIZZERIA","OBJEDNAVKA c. 101   "+pad(now.getDate())+". "+pad(now.getMonth()+1)+". "+hm(now),"================================","ROZVOZ","TEL: 0944054467","ADRESA: Kosice, Hlavna 12","MENO: Novak","DORUCIT DO: "+hm(dor),"--------------------------------","1x Molly 50cm - 17,00 EUR","1x Rodinna 33cm - 8,00 EUR","- bez kukurice (sunkova)","--------------------------------","POZNAMKA: PLATBA: KARTA","Doprava: 1,50 EUR","SPOLU: 26,50 EUR"].join("\n");
   }
   let demoRun=0;
   async function demo(){
