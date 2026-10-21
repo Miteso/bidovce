@@ -45,7 +45,7 @@ const dnes = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Br
 $("den").value = dnes();
 const eur = (x) => Number(x || 0).toFixed(2).replace(".", ",") + " €";
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
-const CERVENE = /^(!!!!|OPRAVA BLOCKU|PLATI TENTO|STARY ZAHODIT|ZRUSENA|OBJEDNAVKA c\.\d|NEPRIPRAVOVAT|NEVOZIT|ZRUSENE:)/;
+const CERVENE = /^(!!!!|OPRAVA BLOCKU|PLATI TENTO|STARY ZAHODIT|ZRUSENA|OBJEDNAVKA c\.\d|NEPRIPRAVOVAT|NEVOZIT|ZRUSENE:|ZAVOLAT$|ZAKAZNIKOVI$|NEDOKONCENA$|OBJEDNAVKA$)/;
 const VELKE = /^(TEL:|ADRESA:|SPOLU:|DORUCIT DO:|PRIPRAVIT DO:|\*\*\* TEST|NEPRIPRAVOVAT|!! ZAVOLAT|overit )/;
 
 async function nacitaj() {
@@ -56,7 +56,7 @@ async function nacitaj() {
     if (!d.ok) throw new Error(d.chyba || r.status);
     const den = $("den").value;
     const obj = d.objednavky.filter((o) => new Date(o.prijata).toLocaleDateString("sv-SE", { timeZone: "Europe/Bratislava" }) === den);
-    const ostre = obj.filter((o) => !o.test && !o.zrusena);
+    const ostre = obj.filter((o) => !o.test && !o.zrusena && !o.nedokoncena);
     const trzba = ostre.reduce((s, o) => s + Number(o.suma || 0), 0);
     const rozvoz = ostre.filter((o) => /rozvoz/i.test(o.sposob || "")).length;
     $("sum").innerHTML =
