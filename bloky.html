@@ -45,7 +45,7 @@ const dnes = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Br
 $("den").value = dnes();
 const eur = (x) => Number(x || 0).toFixed(2).replace(".", ",") + " €";
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
-const CERVENE = /^(!!!!|OPRAVA BLOCKU|PLATI TENTO|STARY ZAHODIT|ZRUSENA|OBJEDNAVKA c\.\d|NEPRIPRAVOVAT|NEVOZIT|ZRUSENE:|ZAVOLAT$|ZAKAZNIKOVI$|NEDOKONCENA$|OBJEDNAVKA$)/;
+const CERVENE = /^(!!!!|OPRAVA BLOCKU|PLATI TENTO|STARY ZAHODIT|ZRUSENA|OBJEDNAVKA c\.\d|NEPRIPRAVOVAT|NEVOZIT|ZRUSENE:|ZAVOLAT$|ZAKAZNIKOVI$|NEDOKONCENA$|OBJEDNAVKA$|ZMENA$|K OBJEDNAVKE c\.\d|OBJEDNAVKY$)/;
 const VELKE = /^(TEL:|ADRESA:|SPOLU:|DORUCIT DO:|PRIPRAVIT DO:|\*\*\* TEST|NEPRIPRAVOVAT|!! ZAVOLAT|overit )/;
 
 async function nacitaj() {
@@ -56,7 +56,7 @@ async function nacitaj() {
     if (!d.ok) throw new Error(d.chyba || r.status);
     const den = $("den").value;
     const obj = d.objednavky.filter((o) => new Date(o.prijata).toLocaleDateString("sv-SE", { timeZone: "Europe/Bratislava" }) === den);
-    const ostre = obj.filter((o) => !o.test && !o.zrusena && !o.nedokoncena);
+    const ostre = obj.filter((o) => !o.test && !o.zrusena && !o.nedokoncena && o.zmena_k == null);
     const trzba = ostre.reduce((s, o) => s + Number(o.suma || 0), 0);
     const rozvoz = ostre.filter((o) => /rozvoz/i.test(o.sposob || "")).length;
     $("sum").innerHTML =
@@ -67,7 +67,7 @@ async function nacitaj() {
     $("zoznam").innerHTML = obj.length ? obj.map((o) => {
       const riadky = esc(o.blocek).split("\n").map((l) => CERVENE.test(l) ? `<span class="red">${l}</span>` : VELKE.test(l) ? `<span class="big">${l}</span>` : l).join("\n");
       const call = /!! ZAVOLAT/.test(o.blocek);
-      return `<div class="bl${o.test ? " test" : ""}${call ? " call" : ""}${/OPRAVA BLOCKU/.test(o.blocek) || o.zrusena ? " opr" : ""}" style="margin-bottom:10px"><pre>${riadky.trim()}</pre></div>`;
+      return `<div class="bl${o.test ? " test" : ""}${call ? " call" : ""}${/OPRAVA BLOCKU/.test(o.blocek) || o.zrusena || o.zmena_k != null ? " opr" : ""}" style="margin-bottom:10px"><pre>${riadky.trim()}</pre></div>`;
     }).join("") : `<div class="empty">V tento deň žiadne objednávky.</div>`;
     $("stav").textContent = "Aktualizované " + new Date().toLocaleTimeString("sk-SK") + " · obnovuje sa každých 30 s";
     $("stav").className = "stav";
