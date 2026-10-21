@@ -24,6 +24,8 @@
   .bl.call { border:2px solid var(--red); }
   .bl pre { margin:0; font:13px/1.35 ui-monospace, Menlo, monospace; white-space:pre-wrap; word-break:break-word; }
   .bl .big { font-weight:800; font-size:15px; }
+  .bl .red { color:var(--red); font-weight:900; font-size:17px; }
+  .bl.opr { border:3px solid var(--red); }
   .empty { color:var(--muted); text-align:center; padding:30px 0; }
 </style>
 </head>
@@ -43,6 +45,7 @@ const dnes = () => new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Br
 $("den").value = dnes();
 const eur = (x) => Number(x || 0).toFixed(2).replace(".", ",") + " €";
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+const CERVENE = /^(!!!!|OPRAVA BLOCKU|PLATI TENTO|STARY ZAHODIT)/;
 const VELKE = /^(TEL:|ADRESA:|SPOLU:|DORUCIT DO:|PRIPRAVIT DO:|\*\*\* TEST|NEPRIPRAVOVAT|!! ZAVOLAT|overit )/;
 
 async function nacitaj() {
@@ -62,9 +65,9 @@ async function nacitaj() {
       `<div><b>${rozvoz}</b><span>rozvoz</span></div>` +
       `<div><b>${ostre.length - rozvoz}</b><span>osobný odber</span></div>`;
     $("zoznam").innerHTML = obj.length ? obj.map((o) => {
-      const riadky = esc(o.blocek).split("\n").map((l) => VELKE.test(l) ? `<span class="big">${l}</span>` : l).join("\n");
+      const riadky = esc(o.blocek).split("\n").map((l) => CERVENE.test(l) ? `<span class="red">${l}</span>` : VELKE.test(l) ? `<span class="big">${l}</span>` : l).join("\n");
       const call = /!! ZAVOLAT/.test(o.blocek);
-      return `<div class="bl${o.test ? " test" : ""}${call ? " call" : ""}" style="margin-bottom:10px"><pre>${riadky.trim()}</pre></div>`;
+      return `<div class="bl${o.test ? " test" : ""}${call ? " call" : ""}${/OPRAVA BLOCKU/.test(o.blocek) ? " opr" : ""}" style="margin-bottom:10px"><pre>${riadky.trim()}</pre></div>`;
     }).join("") : `<div class="empty">V tento deň žiadne objednávky.</div>`;
     $("stav").textContent = "Aktualizované " + new Date().toLocaleTimeString("sk-SK") + " · obnovuje sa každých 30 s";
     $("stav").className = "stav";
