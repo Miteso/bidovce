@@ -1,16 +1,18 @@
 #!/bin/bash
 # Instalacia tlace objednavok na Raspberry Pi.
-# Spustenie:  curl -fsSL https://miteso.github.io/bidovce/pi/install.sh | sudo bash
+# Spustenie:  curl -fsSL https://miteso.github.io/bidovce/pi/install.sh | sudo bash -s [KLUC]
 set -e
 [ "$(id -u)" = 0 ] || { echo "Spusti cez sudo"; exit 1; }
 exec 3</dev/tty
 
 echo "=== Tlac objednavok - instalacia ==="
-if [ -f /etc/pizza-tlac.conf ]; then
+KLUC="$1"
+if [ -n "$KLUC" ]; then zm=a
+elif [ -f /etc/pizza-tlac.conf ]; then
   read -u 3 -p "Kluc uz je nastaveny. Zmenit? (a/N): " zm
 else zm=a; fi
 if [ "$zm" = a ]; then
-  read -u 3 -p "Zadaj kluc tlace (dostal si ho od spravcu): " KLUC
+  [ -n "$KLUC" ] || read -u 3 -p "Zadaj kluc tlace (dostal si ho od spravcu): " KLUC
   [ -n "$KLUC" ] || { echo "Kluc je prazdny"; exit 1; }
   umask 077; echo "KLUC=$KLUC" > /etc/pizza-tlac.conf
 fi
