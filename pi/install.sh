@@ -35,7 +35,8 @@ RestartSec=5
 WantedBy=multi-user.target
 S
 systemctl daemon-reload
-systemctl enable --now pizza-tlac.service
+systemctl enable pizza-tlac.service
+systemctl restart pizza-tlac.service
 
 read -u 3 -p "Pridat Wi-Fi pizzerie? (a/N): " wf
 if [ "$wf" = a ]; then
