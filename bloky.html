@@ -31,7 +31,7 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Bločky</h1>
+  <h1 id="nadpis">Bločky</h1>
   <div class="row"><label for="den">Deň:</label><input type="date" id="den"></div>
   <div class="sum" id="sum"></div>
   <div class="stav" id="stav">Načítavam…</div>
@@ -54,6 +54,7 @@ async function nacitaj() {
     const r = await fetch(API + "?k=" + encodeURIComponent(kluc), { cache: "no-store" });
     const d = await r.json();
     if (!d.ok) throw new Error(d.chyba || r.status);
+    if (d.pizzeria) { $("nadpis").textContent = "Bločky – " + d.pizzeria; document.title = "Bločky – " + d.pizzeria; }
     const den = $("den").value;
     const obj = d.objednavky.filter((o) => new Date(o.prijata).toLocaleDateString("sv-SE", { timeZone: "Europe/Bratislava" }) === den);
     const ostre = obj.filter((o) => !o.test && !o.zrusena && !o.nedokoncena && o.zmena_k == null);
