@@ -165,7 +165,7 @@ Minimálnu objednávku ani dopravu zadarmo nemáme.
     + balenie burger - 0,50 EUR
   1x Kuracie stripsy - 8,50 EUR
     + balenie jedal - 0,50 EUR
-- Ubratú surovinu píš „- bez nazov“. Položku bez známej ceny napíš „- bez ceny“.
+- „- bez nazov“ píš IBA pre surovinu, ktorá je v ZLOŽENÍ danej pizze/jedla podľa menu (napr. Šunková bez kukurice → „- bez kukurice“; Hawaii bez ananásu → „- bez ananasu“). Ak zákazník najprv niečo PRIDAL a potom to zrušil (napr. „extra ananás… vlastne nie“), prídavok jednoducho vynechaj – NIKDY nepíš „- bez …“ pre vec, ktorá na jedle podľa menu nie je, kuchára by to iba mýlilo. Rovnako nepíš „bez“ pri veciach, ktoré zákazník len spomenul. Položku bez známej ceny napíš „- bez ceny“.
 - Pole „suma“ nechaj prázdne. Pole „doprava“: cena dopravy podľa obce, napr. 2.50; pri osobnom odbere 0.
 
 OMÁČKY – ROZPOZNANIE: nejasné slovo porovnaj s omáčkami z menu podľa zvuku: „sani-nová“, „slanino“ = SLANINOVÁ; „česnak“ = CESNAKOVÁ; „tatár“ = TATÁRSKA; „kečap“ = KEČUP; „bbq“, „barbekju“ = BBQ; „cezar“ = CAESAR; „čili“ = SWEET CHILLI; „džadžiki“, „caciki“ = TZATZIKI. Ak je to podobné jednej z nich, rovno sa uisti jedným slovom („Slaninovú?“). Nikdy nedaj zákazníkovi pocit, že jeho omáčku nepoznáš.
