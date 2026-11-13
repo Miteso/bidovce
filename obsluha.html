@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Obsluha</title>
+<style>
+  :root { --bg:#f6f4f1; --card:#fff; --fg:#1f1a17; --muted:#6d625b; --line:#e2dbd4; --red:#b8261f; --ok:#2f7a3d; --new:#fff4d6; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.4 system-ui, sans-serif; }
+  .wrap { max-width:620px; margin:0 auto; padding:12px 16px 40px; display:flex; flex-direction:column; gap:12px; }
+  h1 { font-size:21px; margin:4px 0 0; }
+  h2 { font-size:14px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:14px 0 4px; }
+  .tabs { position:sticky; top:0; z-index:5; background:var(--bg); display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:6px 0; }
+  .tabs button { text-align:center; font-weight:700; min-height:48px; }
+  .tabs button.on { background:var(--fg); color:#fff; border-color:var(--fg); }
+  .bar { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:15px; }
+  .bar.ok { border-color:var(--ok); color:var(--ok); }
+  .bar.err { border-color:var(--red); color:var(--red); }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  button { font:inherit; border-radius:12px; padding:12px 10px; border:1px solid var(--line); background:var(--card); color:var(--fg); text-align:left; min-height:52px; cursor:pointer; }
+  button.off { background:var(--red); border-color:var(--red); color:#fff; font-weight:700; }
+  .pol button.off::after { content:" – VYPREDANÉ"; font-weight:400; font-size:13px; }
+  .cas button { text-align:center; font-size:19px; font-weight:700; min-height:64px; }
+  .cas button small { display:block; font-size:13px; font-weight:400; }
+  .cas button.sel { background:var(--fg); color:#fff; border-color:var(--fg); }
+  .cas button.sel.late { background:var(--red); border-color:var(--red); }
+  .row { display:flex; gap:8px; }
+  input, textarea { font:inherit; padding:12px; border-radius:12px; border:1px solid var(--line); min-width:0; background:var(--card); color:var(--fg); }
+  input { flex:1; }
+  textarea { width:100%; }
+  .main { background:var(--fg); color:#fff; font-weight:700; text-align:center; }
+  .help { color:var(--muted); font-size:15px; margin:0; }
+  .sum { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; display:grid; grid-template-columns:repeat(4,1fr); gap:6px; }
+  .sum b { font-size:20px; display:block; }
+  .sum span { color:var(--muted); font-size:13px; }
+  .bl { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .bl.test { border:2px dashed var(--muted); opacity:.7; }
+  .bl.call { border:2px solid var(--red); }
+  .bl.opr { border:3px solid var(--red); }
+  .bl.nova { background:var(--new); }
+  .bl pre { margin:0; font:13px/1.35 ui-monospace, Menlo, monospace; white-space:pre-wrap; word-break:break-word; }
+  .bl .big { font-weight:800; font-size:15px; }
+  .bl .red { color:var(--red); font-weight:900; font-size:17px; }
+  .empty { color:var(--muted); text-align:center; padding:30px 0; }
+  [hidden] { display:none !important; }
+  @media (max-width:420px) { .sum { grid-template-columns:1fr 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 id="nadpis">Obsluha</h1>
+  <div class="tabs">
+    <button data-t="bloky" class="on">Bločky</button>
+    <button data-t="vypredane">Vypredané</button>
+    <button data-t="cas">Čas rozvozu</button>
+  </div>
+  <div class="bar" id="stav">Načítavam…</div>
+
+  <!-- BLOČKY -->
+  <section id="t-bloky">
+    <div class="sum" id="sum"></div>
+    <p class="help" id="bstav" style="margin-top:8px">Načítavam…</p>
+    <div id="bloky" style="margin-top:8px"></div>
+  </section>
+
+  <!-- VYPREDANÉ -->
+  <section id="t-vypredane" hidden>
+    <p class="help">Ťuknite na položku, ktorá sa minula – zčervená a agent ju zákazníkom prestane ponúkať. Ďalším ťuknutím ju vrátite. Zoznam sa každý deň sám vynuluje.</p>
+    <div id="zoznam" class="pol"></div>
+    <h2>Iné (napíšte)</h2>
+    <div class="row"><input id="ine" placeholder="napr. slanina, kukurica"><button class="main" id="pridaj" style="flex:none">Pridať</button></div>
+    <div id="vlastne" class="grid pol" style="margin-top:8px"></div>
+    <button class="main" id="vsetko" style="width:100%;margin-top:12px">Všetko je k dispozícii</button>
+    <h2>Odkaz pre agenta</h2>
+    <p class="help">Čo má agent dnes zákazníkom povedať alebo dodržať (napr. „Do Dargova dnes nerozvážame“). Zajtra sa samo vymaže.</p>
+    <textarea id="oznam" rows="3" maxlength="500" style="margin-top:6px"></textarea>
+    <div class="row" style="margin-top:6px"><button class="main" id="ulozOznam" style="flex:1">Uložiť odkaz</button><button id="zmazOznam">Vymazať</button></div>
+  </section>
+
+  <!-- ČAS ROZVOZU -->
+  <section id="t-cas" hidden>
+    <p class="help">Keď nestíhate, zvoľte, za koľko teraz doručíte. Agent to povie zákazníkom pri nasledujúcich hovoroch. Zajtra sa samo vráti na 1 hodinu.</p>
+    <div class="grid cas" id="cas" style="margin-top:8px"></div>
+  </section>
+</div>
+<script>
+const API = "https://ianslaoxiuwoztwqqkyk.supabase.co/functions/v1/objednavky";
+const kluc = new URLSearchParams(location.search).get("k") || "";
+const $ = (id) => document.getElementById(id);
+const tz = { timeZone: "Europe/Bratislava" };
+const dnes = () => new Date().toLocaleDateString("sv-SE", tz);
+const eur = (x) => Number(x || 0).toFixed(2).replace(".", ",") + " €";
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+function stav(t, typ) { $("stav").textContent = t; $("stav").className = "bar" + (typ ? " " + typ : ""); }
+async function post(body) {
+  const r = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const d = await r.json();
+  if (!d.ok) throw new Error(d.chyba || r.status);
+  return d;
+}
+
+// --- záložky
+let tab = "bloky";
+try { tab = localStorage.getItem("obsluha_tab") || "bloky"; } catch (e) {}
+function ukaz(t) {
+  tab = t;
+  document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("on", b.dataset.t === t));
+  for (const s of ["bloky", "vypredane", "cas"]) $("t-" + s).hidden = s !== t;
+  try { localStorage.setItem("obsluha_tab", t); } catch (e) {}
+}
+document.querySelectorAll(".tabs button").forEach((b) => b.onclick = () => ukaz(b.dataset.t));
+ukaz(tab);
+
+// --- BLOČKY (online, obnovuje sa každých 20 s)
+const CERVENE = /^(!!!!|OPRAVA BLOCKU|PLATI TENTO|STARY ZAHODIT|ZRUSENA|OBJEDNAVKA c\.\d|NEPRIPRAVOVAT|NEVOZIT|ZRUSENE:|ZAVOLAT$|ZAKAZNIKOVI$|NEDOKONCENA$|OBJEDNAVKA$|ZMENA$|K OBJEDNAVKE c\.\d|OBJEDNAVKY$)/;
+const VELKE = /^(TEL:|ADRESA:|SPOLU:|DORUCIT DO:|PRIPRAVIT DO:|\*\*\* TEST|NEPRIPRAVOVAT|!! ZAVOLAT|overit )/;
+let videne = null;
+async function nacitajBloky() {
+  try {
+    const r = await fetch(API + "?k=" + encodeURIComponent(kluc), { cache: "no-store" });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.chyba || r.status);
+    if (d.pizzeria) { $("nadpis").textContent = "Obsluha – " + d.pizzeria; document.title = "Obsluha – " + d.pizzeria; }
+    const obj = d.objednavky.filter((o) => new Date(o.prijata).toLocaleDateString("sv-SE", tz) === dnes());
+    const ostre = obj.filter((o) => !o.test && !o.zrusena && !o.nedokoncena && o.zmena_k == null);
+    const rozvoz = ostre.filter((o) => /rozvoz/i.test(o.sposob || "")).length;
+    $("sum").innerHTML =
+      `<div><b>${ostre.length}</b><span>objednávok</span></div>` +
+      `<div><b>${eur(ostre.reduce((s, o) => s + Number(o.suma || 0), 0))}</b><span>tržba</span></div>` +
+      `<div><b>${rozvoz}</b><span>rozvoz</span></div>` +
+      `<div><b>${ostre.length - rozvoz}</b><span>odber</span></div>`;
+    const nove = videne ? obj.filter((o) => !videne.has(o.id)).map((o) => o.id) : [];
+    videne = new Set(obj.map((o) => o.id));
+    $("bloky").innerHTML = obj.length ? obj.map((o) => {
+      const riadky = esc(o.blocek).split("\n").map((l) => CERVENE.test(l) ? `<span class="red">${l}</span>` : VELKE.test(l) ? `<span class="big">${l}</span>` : l).join("\n");
+      const cls = ["bl", o.test ? "test" : "", /!! ZAVOLAT/.test(o.blocek) ? "call" : "", (/OPRAVA BLOCKU/.test(o.blocek) || o.zrusena || o.zmena_k != null) ? "opr" : "", nove.includes(o.id) ? "nova" : ""].filter(Boolean).join(" ");
+      return `<div class="${cls}"><pre>${riadky.trim()}</pre></div>`;
+    }).join("") : `<div class="empty">Dnes zatiaľ žiadne objednávky.</div>`;
+    if (nove.length) pipni();
+    $("bstav").textContent = "Aktualizované " + new Date().toLocaleTimeString("sk-SK") + " · obnovuje sa samo každých 20 s";
+  } catch (e) { $("bstav").textContent = "Chyba načítania bločkov (" + e.message + ")."; }
+}
+function pipni() {
+  try { const a = new (window.AudioContext || window.webkitAudioContext)(); const o = a.createOscillator(); o.frequency.value = 880; o.connect(a.destination); o.start(); setTimeout(() => { o.stop(); a.close(); }, 300); } catch (e) {}
+}
+
+// --- VYPREDANÉ
+let ponuka = [], vypredane = [];
+function vykresliPonuku() {
+  const z = $("zoznam"); z.innerHTML = "";
+  const kat = {};
+  for (const p of ponuka) (kat[p.kategoria] = kat[p.kategoria] || []).push(p.nazov);
+  for (const [k, polozky] of Object.entries(kat)) {
+    const h = document.createElement("h2"); h.textContent = k; z.append(h);
+    const g = document.createElement("div"); g.className = "grid";
+    for (const p of polozky) {
+      const b = document.createElement("button"); b.textContent = p;
+      if (vypredane.includes(p)) b.className = "off";
+      b.onclick = () => prepni(p); g.append(b);
+    }
+    z.append(g);
+  }
+  const vsetky = ponuka.map((p) => p.nazov);
+  const v = $("vlastne"); v.innerHTML = "";
+  for (const p of vypredane.filter((x) => !vsetky.includes(x))) {
+    const b = document.createElement("button"); b.textContent = p; b.className = "off";
+    b.onclick = () => prepni(p); v.append(b);
+  }
+}
+async function ulozVypredane() {
+  stav("Ukladám…");
+  try { await post({ zoznam: vypredane }); stav(vypredane.length ? "Uložené. Vypredané: " + vypredane.join(", ") : "Uložené. Všetko je k dispozícii.", "ok"); }
+  catch (e) { stav("Nepodarilo sa uložiť (" + e.message + "). Skúste znova.", "err"); }
+}
+function prepni(p) { vypredane = vypredane.includes(p) ? vypredane.filter((x) => x !== p) : [...vypredane, p]; vykresliPonuku(); ulozVypredane(); }
+$("pridaj").onclick = () => { const t = $("ine").value.trim(); if (!t) return; $("ine").value = ""; if (!vypredane.includes(t)) prepni(t); };
+$("vsetko").onclick = () => { vypredane = []; vykresliPonuku(); ulozVypredane(); };
+async function ulozOznam(t) {
+  stav("Ukladám odkaz…");
+  try { await post({ oznam: t }); $("oznam").value = t; stav(t ? "Odkaz uložený. Agent ho použije od najbližšieho hovoru." : "Odkaz vymazaný.", "ok"); }
+  catch (e) { stav("Nepodarilo sa uložiť odkaz (" + e.message + "). Skúste znova.", "err"); }
+}
+$("ulozOznam").onclick = () => ulozOznam($("oznam").value.trim());
+$("zmazOznam").onclick = () => ulozOznam("");
+
+// --- ČAS ROZVOZU (meškanie v minútach k bežným 45–60 min)
+const CASY = [[0, "1 h", "bežne"], [30, "1:30 h", ""], [60, "2:00 h", ""], [90, "2:30 h", ""], [120, "3:00 h", ""]];
+let meskanie = 0;
+function vykresliCas() {
+  const g = $("cas"); g.innerHTML = "";
+  for (const [m, t, pozn] of CASY) {
+    const b = document.createElement("button");
+    b.innerHTML = t + (pozn ? `<small>${pozn}</small>` : `<small>osobný odber do ${Math.round((30 + m) / 15) * 15} min</small>`);
+    if (m === meskanie) b.className = "sel" + (m ? " late" : "");
+    b.onclick = () => ulozCas(m); g.append(b);
+  }
+}
+async function ulozCas(m) {
+  const pred = meskanie; meskanie = m; vykresliCas(); stav("Ukladám…");
+  try { await post({ meskanie: m }); stav(m ? "Uložené. Agent hovorí rozvoz do " + CASY.find((c) => c[0] === m)[1] + "." : "Uložené. Bežný čas rozvozu (do 1 h).", "ok"); }
+  catch (e) { meskanie = pred; vykresliCas(); stav("Nepodarilo sa uložiť (" + e.message + "). Skúste znova.", "err"); }
+}
+
+// --- štart
+(async () => {
+  if (!kluc) { stav("V odkaze chýba kľúč pizzerie.", "err"); return; }
+  nacitajBloky();
+  setInterval(nacitajBloky, 20000);
+  try {
+    const r = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { cache: "no-store" });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.chyba || r.status);
+    ponuka = d.ponuka || []; vypredane = d.vypredane || []; meskanie = Number(d.meskanie) || 0; $("oznam").value = d.oznam || "";
+    vykresliPonuku(); vykresliCas();
+    const c = CASY.find((x) => x[0] === meskanie);
+    stav((vypredane.length ? "Dnes vypredané: " + vypredane.join(", ") + "." : "Dnes je všetko k dispozícii.") + " Rozvoz: " + (c ? "do " + c[1] : "+" + meskanie + " min") + ".", "ok");
+  } catch (e) { stav("Chyba: " + e.message, "err"); }
+})();
+</script>
+</body>
+</html>
