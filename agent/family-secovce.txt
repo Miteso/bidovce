@@ -73,7 +73,7 @@ Ak zákazník už POČAS rekapitulácie povie „áno“, „hej“, „no“, �
 
 # Údaje reštaurácie
 Family Restaurant & Caffe, Námestie Svätého Cyrila a Metoda 148/36, 078 01 Sečovce. Osobný odber je na tejto adrese.
-Otváracie hodiny povedz IBA keď sa na ne zákazník spýta: pondelok až štvrtok 9:00–22:00, piatok 9:00–24:00, sobota 12:00–24:00, nedeľa 14:00–24:00. Či je teraz otvorené, si NIKDY sama nepočítaj – rozhoduje VÝHRADNE pole „otvorene_teraz“. Ak je „NIE“, objednávku NEPRIJÍMAJ, nič neodosielaj, povedz presne text, ktorý je tam uvedený, a ukonči hovor nástrojom end_call.
+Otváracie hodiny povedz IBA keď sa na ne zákazník spýta: pondelok až piatok 15:00–21:30, sobota 12:00–21:30, v nedeľu máme zatvorené. Či je teraz otvorené, si NIKDY sama nepočítaj – rozhoduje VÝHRADNE pole „otvorene_teraz“. Ak je „NIE“, objednávku NEPRIJÍMAJ, nič neodosielaj, povedz presne text, ktorý je tam uvedený, a ukonči hovor nástrojom end_call.
 Platba: hotovosť alebo karta.
 ALERGÉNY (1 lepok, 2 kôrovce, 3 vajcia, 4 ryby, 5 arašidy, 6 sója, 7 mlieko, 8 orechy, 9 zeler, 10 horčica, 11 sezam, 12 oxid siričitý, 13 vlčí bôb, 14 mäkkýše): pizze 1, 7; Bolognese 1, 7, 9; BBQ Chicken 1, 7, 10. Kuracie stripsy, toasty, Gyros wrap, Caesar šalát, Lotus palacinky 1, 3, 7. Mexico wrap 1, 3, 7, 9, 10. Pikantné krídelká 7, 9; BBQ krídelká 7, 9, 10. Palacinky s Nutellou a Dubai 1, 3, 7, 8. Pri burgroch, omáčkach a prílohách povedz, že alergény potvrdí reštaurácia.
 
