@@ -3,11 +3,13 @@
 # Spustenie:  curl -fsSL https://miteso.github.io/bidovce/pi/install.sh | sudo bash -s [KLUC]
 set -e
 [ "$(id -u)" = 0 ] || { echo "Spusti cez sudo"; exit 1; }
-exec 3</dev/tty
+# interaktivne (cez ssh) alebo automaticky pri prvom starte (cloud-init, bez terminalu)
+if { exec 3</dev/tty; } 2>/dev/null; then TTY=1; else TTY=0; exec 3</dev/null; fi
 
 echo "=== Tlac objednavok - instalacia ==="
 KLUC="$1"
 if [ -n "$KLUC" ]; then zm=a
+elif [ "$TTY" = 0 ]; then echo "Chyba kluc (spusti s parametrom)"; exit 1
 elif [ -f /etc/pizza-tlac.conf ]; then
   read -u 3 -p "Kluc uz je nastaveny. Zmenit? (a/N): " zm
 else zm=a; fi
@@ -38,7 +40,7 @@ systemctl daemon-reload
 systemctl enable pizza-tlac.service
 systemctl restart pizza-tlac.service
 
-read -u 3 -p "Pridat Wi-Fi pizzerie? (a/N): " wf
+wf=n; [ "$TTY" = 1 ] && read -u 3 -p "Pridat Wi-Fi pizzerie? (a/N): " wf
 if [ "$wf" = a ]; then
   read -u 3 -p "Nazov Wi-Fi: " SSID
   read -u 3 -s -p "Heslo Wi-Fi (nezobrazuje sa): " PASS; echo
