@@ -81,9 +81,12 @@
 
   <!-- ČAS ROZVOZU -->
   <section id="t-cas" hidden>
-    <p class="help">Bežne systém počíta čas sám podľa počtu objednávok (kuchyňa + vodič). Keď aj tak nestíhate, zvoľte najkratší čas, ktorý môže agent zákazníkom sľúbiť. Zajtra sa samo vráti na Automaticky.</p>
+    <p class="help">Bežne systém počíta čas rozvozu sám podľa počtu objednávok (kuchyňa + vodič). Keď nestíhate, zvoľte, za koľko teraz doručíte – agent nesľúbi kratší čas. Osobný odber je vždy do 30 minút. Zajtra sa samo vráti na Automaticky.</p>
     <div class="bar" id="odhad" style="margin-top:8px" hidden></div>
     <div class="grid cas" id="cas" style="margin-top:8px"></div>
+    <h2>Iný čas rozvozu (napíšte)</h2>
+    <div class="row"><input id="vlastnyCas" inputmode="numeric" placeholder="napr. 1:15 alebo 75"><button class="main" id="ulozCas" style="flex:none">Uložiť</button></div>
+    <p class="help" style="margin-top:6px">Hodiny:minúty (1:15) alebo minúty (75). Najviac 3 hodiny.</p>
   </section>
 </div>
 <script>
@@ -186,23 +189,41 @@ async function ulozOznam(t) {
 $("ulozOznam").onclick = () => ulozOznam($("oznam").value.trim());
 $("zmazOznam").onclick = () => ulozOznam("");
 
-// --- ČAS ROZVOZU (meškanie v minútach k bežným 45–60 min)
-const CASY = [[0, "Automaticky", "podľa vyťaženia"], [30, "aspoň 1:30 h", ""], [60, "aspoň 2:00 h", ""], [90, "aspoň 2:30 h", ""], [120, "aspoň 3:00 h", ""]];
+// --- ČAS ROZVOZU: hodnota = najkratší čas rozvozu v minútach, ktorý agent sľúbi (0 = automaticky podľa vyťaženia)
+const CASY = [[0, "Automaticky", "podľa vyťaženia"], [60, "1 h", "rozvoz do 1 h"], [90, "1:30 h", "rozvoz do 1:30"], [120, "2:00 h", "rozvoz do 2 h"], [150, "2:30 h", "rozvoz do 2:30"], [180, "3:00 h", "rozvoz do 3 h"]];
 let meskanie = 0;
+const hm = (m) => Math.floor(m / 60) + ":" + String(m % 60).padStart(2, "0") + " h";
 function vykresliCas() {
   const g = $("cas"); g.innerHTML = "";
-  for (const [m, t, pozn] of CASY) {
+  const vlastny = meskanie > 0 && !CASY.some((c) => c[0] === meskanie);
+  for (const [m, t, pozn] of (vlastny ? [...CASY, [meskanie, hm(meskanie), "vlastný čas"]] : CASY)) {
     const b = document.createElement("button");
-    b.innerHTML = t + (pozn ? `<small>${pozn}</small>` : `<small>osobný odber do ${Math.round((30 + m) / 15) * 15} min</small>`);
+    b.innerHTML = t + `<small>${pozn}</small>`;
     if (m === meskanie) b.className = "sel" + (m ? " late" : "");
     b.onclick = () => ulozCas(m); g.append(b);
   }
 }
 async function ulozCas(m) {
   const pred = meskanie; meskanie = m; vykresliCas(); stav("Ukladám…");
-  try { await post({ meskanie: m }); stav(m ? "Uložené. Agent sľubuje rozvoz " + CASY.find((c) => c[0] === m)[1] + "." : "Uložené. Čas sa počíta automaticky podľa vyťaženia.", "ok"); }
-  catch (e) { meskanie = pred; vykresliCas(); stav("Nepodarilo sa uložiť (" + e.message + "). Skúste znova.", "err"); }
+  try {
+    const d = await post({ meskanie: m });
+    stav(m ? "Uložené. Agent sľubuje rozvoz najskôr za " + hm(m) + "." : "Uložené. Čas sa počíta automaticky podľa vyťaženia.", "ok");
+    try { const r2 = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { cache: "no-store" }); ukazOdhad(await r2.json()); } catch (e) {}
+  } catch (e) { meskanie = pred; vykresliCas(); stav("Nepodarilo sa uložiť (" + e.message + "). Skúste znova.", "err"); }
 }
+function precitajCas(t) {
+  t = String(t).trim().toLowerCase().replace(",", ":").replace(".", ":").replace(/\s+/g, "");
+  let m = t.match(/^(\d{1,2})(?::|h)(\d{1,2})?(?:min)?$/);
+  if (m) return Number(m[1]) * 60 + Number(m[2] || 0);
+  m = t.match(/^(\d{1,3})(?:min|m)?$/);
+  if (m) return Number(m[1]);
+  return NaN;
+}
+$("ulozCas").onclick = () => {
+  const m = precitajCas($("vlastnyCas").value);
+  if (!Number.isFinite(m) || m < 20 || m > 180) { stav("Napíšte čas od 20 minút do 3 hodín, napr. 1:15 alebo 75.", "err"); return; }
+  $("vlastnyCas").value = ""; ulozCas(m);
+};
 
 function ukazOdhad(d) {
   if (!d || !d.cas_text) return;
@@ -225,8 +246,7 @@ function ukazOdhad(d) {
     setInterval(async () => {
       try { const r2 = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { cache: "no-store" }); ukazOdhad(await r2.json()); } catch (e) {}
     }, 60000);
-    const c = CASY.find((x) => x[0] === meskanie);
-    stav((vypredane.length ? "Dnes vypredané: " + vypredane.join(", ") + "." : "Dnes je všetko k dispozícii.") + " Čas rozvozu: " + (c ? c[1].toLowerCase() : "+" + meskanie + " min") + ".", "ok");
+    stav((vypredane.length ? "Dnes vypredané: " + vypredane.join(", ") + "." : "Dnes je všetko k dispozícii.") + " Čas rozvozu: " + (meskanie ? "najskôr za " + hm(meskanie) : "automaticky") + ".", "ok");
   } catch (e) { stav("Chyba: " + e.message, "err"); }
 })();
 </script>
