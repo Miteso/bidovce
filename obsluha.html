@@ -81,7 +81,8 @@
 
   <!-- ČAS ROZVOZU -->
   <section id="t-cas" hidden>
-    <p class="help">Keď nestíhate, zvoľte, za koľko teraz doručíte. Agent to povie zákazníkom pri nasledujúcich hovoroch. Zajtra sa samo vráti na 1 hodinu.</p>
+    <p class="help">Bežne systém počíta čas sám podľa počtu objednávok (kuchyňa + vodič). Keď aj tak nestíhate, zvoľte najkratší čas, ktorý môže agent zákazníkom sľúbiť. Zajtra sa samo vráti na Automaticky.</p>
+    <div class="bar" id="odhad" style="margin-top:8px" hidden></div>
     <div class="grid cas" id="cas" style="margin-top:8px"></div>
   </section>
 </div>
@@ -186,7 +187,7 @@ $("ulozOznam").onclick = () => ulozOznam($("oznam").value.trim());
 $("zmazOznam").onclick = () => ulozOznam("");
 
 // --- ČAS ROZVOZU (meškanie v minútach k bežným 45–60 min)
-const CASY = [[0, "1 h", "bežne"], [30, "1:30 h", ""], [60, "2:00 h", ""], [90, "2:30 h", ""], [120, "3:00 h", ""]];
+const CASY = [[0, "Automaticky", "podľa vyťaženia"], [30, "aspoň 1:30 h", ""], [60, "aspoň 2:00 h", ""], [90, "aspoň 2:30 h", ""], [120, "aspoň 3:00 h", ""]];
 let meskanie = 0;
 function vykresliCas() {
   const g = $("cas"); g.innerHTML = "";
@@ -199,8 +200,15 @@ function vykresliCas() {
 }
 async function ulozCas(m) {
   const pred = meskanie; meskanie = m; vykresliCas(); stav("Ukladám…");
-  try { await post({ meskanie: m }); stav(m ? "Uložené. Agent hovorí rozvoz do " + CASY.find((c) => c[0] === m)[1] + "." : "Uložené. Bežný čas rozvozu (do 1 h).", "ok"); }
+  try { await post({ meskanie: m }); stav(m ? "Uložené. Agent sľubuje rozvoz " + CASY.find((c) => c[0] === m)[1] + "." : "Uložené. Čas sa počíta automaticky podľa vyťaženia.", "ok"); }
   catch (e) { meskanie = pred; vykresliCas(); stav("Nepodarilo sa uložiť (" + e.message + "). Skúste znova.", "err"); }
+}
+
+function ukazOdhad(d) {
+  if (!d || !d.cas_text) return;
+  const t = String(d.cas_text).replace(/^[^:]*objednavky\):\s*/, "").replace(/priblizne o /g, "").replace(/ az /g, "–").replace(/minut/g, "min");
+  $("odhad").innerHTML = "<b>Teraz systém sľubuje (1 pizza):</b><br>" + esc(t).split("; ").join("<br>");
+  $("odhad").hidden = false;
 }
 
 // --- štart
@@ -213,9 +221,12 @@ async function ulozCas(m) {
     const d = await r.json();
     if (!d.ok) throw new Error(d.chyba || r.status);
     ponuka = d.ponuka || []; vypredane = d.vypredane || []; meskanie = Number(d.meskanie) || 0; $("oznam").value = d.oznam || "";
-    vykresliPonuku(); vykresliCas();
+    vykresliPonuku(); vykresliCas(); ukazOdhad(d);
+    setInterval(async () => {
+      try { const r2 = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { cache: "no-store" }); ukazOdhad(await r2.json()); } catch (e) {}
+    }, 60000);
     const c = CASY.find((x) => x[0] === meskanie);
-    stav((vypredane.length ? "Dnes vypredané: " + vypredane.join(", ") + "." : "Dnes je všetko k dispozícii.") + " Rozvoz: " + (c ? "do " + c[1] : "+" + meskanie + " min") + ".", "ok");
+    stav((vypredane.length ? "Dnes vypredané: " + vypredane.join(", ") + "." : "Dnes je všetko k dispozícii.") + " Čas rozvozu: " + (c ? c[1].toLowerCase() : "+" + meskanie + " min") + ".", "ok");
   } catch (e) { stav("Chyba: " + e.message, "err"); }
 })();
 </script>
