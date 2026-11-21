@@ -44,6 +44,8 @@
   .bl pre { margin:0; font:13px/1.35 ui-monospace, Menlo, monospace; white-space:pre-wrap; word-break:break-word; }
   .bl .big { font-weight:800; font-size:15px; }
   .bl .red { color:var(--red); font-weight:900; font-size:17px; }
+  .bl.caka { border:2px dashed #b7791f; }
+  .bl .hovor { background:#fff4d6; color:#7a4f00; border-radius:8px; padding:6px 10px; margin-bottom:8px; font-size:14px; font-weight:700; }
   .empty { color:var(--muted); text-align:center; padding:30px 0; }
   [hidden] { display:none !important; }
   .den { display:grid; grid-template-columns:52px 1fr 52px; gap:8px; align-items:center; }
@@ -166,8 +168,10 @@ async function nacitajBloky() {
     videne = new Set(obj.map((o) => o.id));
     $("bloky").innerHTML = obj.length ? obj.map((o) => {
       const riadky = esc(o.blocek).split("\n").map((l) => CERVENE.test(l) ? `<span class="red">${l}</span>` : VELKE.test(l) ? `<span class="big">${l}</span>` : l).join("\n");
-      const cls = ["bl", o.test ? "test" : "", /!! ZAVOLAT/.test(o.blocek) ? "call" : "", (/OPRAVA BLOCKU/.test(o.blocek) || o.zrusena || o.zmena_k != null) ? "opr" : "", nove.includes(o.id) ? "nova" : ""].filter(Boolean).join(" ");
-      return `<div class="${cls}"><pre>${riadky.trim()}</pre></div>`;
+      const caka = !o.vytlacena && !o.zrusena && o.tlac_od && new Date(o.tlac_od) > new Date();
+      const cls = ["bl", o.test ? "test" : "", /!! ZAVOLAT/.test(o.blocek) ? "call" : "", (/OPRAVA BLOCKU/.test(o.blocek) || o.zrusena || o.zmena_k != null) ? "opr" : "", caka ? "caka" : "", nove.includes(o.id) ? "nova" : ""].filter(Boolean).join(" ");
+      const znacka = caka ? `<div class="hovor">⏳ Zákazník ešte telefonuje – bloček sa vytlačí hneď po skončení hovoru</div>` : "";
+      return `<div class="${cls}">${znacka}<pre>${riadky.trim()}</pre></div>`;
     }).join("") : `<div class="empty">Dnes zatiaľ žiadne objednávky.</div>`;
     if (nove.length) pipni();
     $("bstav").textContent = "Aktualizované " + new Date().toLocaleTimeString("sk-SK") + " · obnovuje sa samo každých 20 s";
