@@ -12,7 +12,8 @@
   .wrap { max-width:620px; margin:0 auto; padding:12px 16px 40px; display:flex; flex-direction:column; gap:12px; }
   h1 { font-size:21px; margin:4px 0 0; }
   h2 { font-size:14px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:14px 0 4px; }
-  .tabs { position:sticky; top:0; z-index:5; background:var(--bg); display:grid; grid-template-columns:repeat(3,1fr); gap:6px; padding:6px 0; }
+  .tabs { position:sticky; top:0; z-index:5; background:var(--bg); display:grid; grid-template-columns:repeat(4,1fr); gap:6px; padding:6px 0; }
+  .tabs button { padding:10px 4px; }
   .tabs button { text-align:center; font-weight:700; min-height:48px; }
   .tabs button.on { background:var(--fg); color:#fff; border-color:var(--fg); }
   .bar { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; font-size:15px; }
@@ -45,6 +46,17 @@
   .bl .red { color:var(--red); font-weight:900; font-size:17px; }
   .empty { color:var(--muted); text-align:center; padding:30px 0; }
   [hidden] { display:none !important; }
+  .den { display:grid; grid-template-columns:52px 1fr 52px; gap:8px; align-items:center; }
+  .den button { text-align:center; font-size:22px; font-weight:700; }
+  .den b { text-align:center; font-size:18px; }
+  .kat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:6px 12px 10px; margin-top:10px; }
+  .kat h3 { margin:6px 0 6px; font-size:17px; display:flex; justify-content:space-between; gap:8px; }
+  .kat h3 small { color:var(--muted); font-weight:400; font-size:14px; }
+  .pr { position:relative; display:flex; justify-content:space-between; gap:8px; padding:7px 8px; border-radius:8px; overflow:hidden; }
+  .pr i { position:absolute; inset:0 auto 0 0; background:#efe7dc; border-radius:8px; z-index:0; }
+  .pr span, .pr b { position:relative; z-index:1; }
+  .pr small { color:var(--muted); font-size:13px; font-weight:400; }
+  @media (max-width:480px) { .tabs { grid-template-columns:1fr 1fr; } }
   @media (max-width:420px) { .sum { grid-template-columns:1fr 1fr; } }
 </style>
 </head>
@@ -55,6 +67,7 @@
     <button data-t="bloky" class="on">Bločky</button>
     <button data-t="vypredane">Vypredané</button>
     <button data-t="cas">Čas rozvozu</button>
+    <button data-t="prehlad">Prehľad</button>
   </div>
   <div class="bar" id="stav">Načítavam…</div>
 
@@ -88,6 +101,15 @@
     <div class="row"><input id="vlastnyCas" inputmode="numeric" placeholder="napr. 1:15 alebo 75"><button class="main" id="ulozCas" style="flex:none">Uložiť</button></div>
     <p class="help" style="margin-top:6px">Hodiny:minúty (1:15) alebo minúty (75). Najviac 3 hodiny.</p>
   </section>
+
+  <!-- PREHĽAD DŇA -->
+  <section id="t-prehlad" hidden>
+    <div class="den"><button id="denPred" aria-label="Predošlý deň">‹</button><b id="denText">Dnes</b><button id="denDalej" aria-label="Ďalší deň">›</button></div>
+    <div class="sum" id="psum" style="margin-top:8px"></div>
+    <p class="help" id="pinfo" style="margin-top:8px"></p>
+    <div id="pkat"></div>
+    <p class="help" style="margin-top:10px">Počítajú sa prijaté objednávky z telefónu (bez zrušených, nedokončených a testov). Pizza zadarmo z akcie 3+1 je zarátaná – tiež sa piekla.</p>
+  </section>
 </div>
 <script>
 const API = "https://ianslaoxiuwoztwqqkyk.supabase.co/functions/v1/objednavky";
@@ -111,7 +133,8 @@ try { tab = localStorage.getItem("obsluha_tab") || "bloky"; } catch (e) {}
 function ukaz(t) {
   tab = t;
   document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("on", b.dataset.t === t));
-  for (const s of ["bloky", "vypredane", "cas"]) $("t-" + s).hidden = s !== t;
+  for (const s of ["bloky", "vypredane", "cas", "prehlad"]) $("t-" + s).hidden = s !== t;
+  if (t === "prehlad") setTimeout(nacitajPrehlad, 0);
   try { localStorage.setItem("obsluha_tab", t); } catch (e) {}
 }
 document.querySelectorAll(".tabs button").forEach((b) => b.onclick = () => ukaz(b.dataset.t));
@@ -128,13 +151,17 @@ async function nacitajBloky() {
     if (!d.ok) throw new Error(d.chyba || r.status);
     if (d.pizzeria) { $("nadpis").textContent = "Obsluha – " + d.pizzeria; document.title = "Obsluha – " + d.pizzeria; }
     const obj = d.objednavky.filter((o) => new Date(o.prijata).toLocaleDateString("sv-SE", tz) === dnes());
-    const ostre = obj.filter((o) => !o.test && !o.zrusena && !o.nedokoncena && o.zmena_k == null);
-    const rozvoz = ostre.filter((o) => /rozvoz/i.test(o.sposob || "")).length;
-    $("sum").innerHTML =
-      `<div><b>${ostre.length}</b><span>objednávok</span></div>` +
-      `<div><b>${eur(ostre.reduce((s, o) => s + Number(o.suma || 0), 0))}</b><span>tržba</span></div>` +
-      `<div><b>${rozvoz}</b><span>rozvoz</span></div>` +
-      `<div><b>${ostre.length - rozvoz}</b><span>odber</span></div>`;
+    try {
+      const p = await (await fetch(API + "?prehlad=1&k=" + encodeURIComponent(kluc), { cache: "no-store" })).json();
+      if (p.ok) {
+        const piz = (p.kategorie.find((k) => k.kategoria === "Pizza") || {}).kusy || 0;
+        $("sum").innerHTML =
+          `<div><b>${p.objednavky}</b><span>objednávok</span></div>` +
+          `<div><b>${eur(p.trzba)}</b><span>tržba</span></div>` +
+          `<div><b>${piz}</b><span>pízz</span></div>` +
+          `<div><b>${p.rozvoz} / ${p.odber}</b><span>rozvoz / odber</span></div>`;
+      }
+    } catch (e) {}
     const nove = videne ? obj.filter((o) => !videne.has(o.id)).map((o) => o.id) : [];
     videne = new Set(obj.map((o) => o.id));
     $("bloky").innerHTML = obj.length ? obj.map((o) => {
@@ -231,6 +258,40 @@ function ukazOdhad(d) {
   $("odhad").innerHTML = "<b>Teraz systém sľubuje (1 pizza):</b><br>" + esc(t).split("; ").join("<br>");
   $("odhad").hidden = false;
 }
+
+// --- PREHĽAD DŇA: počítadlo vydaných jedál
+let pDen = dnes();
+const posun = (d, n) => { const x = new Date(d + "T12:00:00"); x.setDate(x.getDate() + n); return x.toLocaleDateString("sv-SE"); };
+const ks = (n) => n + " ks";
+async function nacitajPrehlad() {
+  const jeDnes = pDen === dnes();
+  const dt = new Date(pDen + "T12:00:00");
+  $("denText").textContent = (jeDnes ? "Dnes, " : "") + dt.toLocaleDateString("sk-SK", { weekday: "short", day: "numeric", month: "numeric", year: "numeric" });
+  $("denDalej").disabled = jeDnes;
+  try {
+    const p = await (await fetch(API + "?prehlad=1&k=" + encodeURIComponent(kluc) + "&den=" + pDen, { cache: "no-store" })).json();
+    if (!p.ok) throw new Error(p.chyba || "chyba");
+    const kat = (n) => p.kategorie.find((k) => k.kategoria === n) || { kusy: 0, zdarma: 0, velke: 0, menu: 0 };
+    const piz = kat("Pizza"), bur = kat("Burgre");
+    $("psum").innerHTML =
+      `<div><b>${p.objednavky}</b><span>objednávok</span></div>` +
+      `<div><b>${eur(p.trzba)}</b><span>tržba</span></div>` +
+      `<div><b>${piz.kusy}</b><span>pízz</span></div>` +
+      `<div><b>${bur.kusy}</b><span>burgrov</span></div>`;
+    $("pinfo").textContent = `Rozvoz ${p.rozvoz} · odber ${p.odber}` + (Number(p.doprava) ? ` · doprava ${eur(p.doprava)}` : "") + (p.zavolat ? ` · bločky zavolať ${p.zavolat}` : "") + (p.zrusene ? ` · zrušené ${p.zrusene}` : "");
+    if (!p.polozky.length) { $("pkat").innerHTML = `<div class="empty">V tento deň neboli žiadne objednávky.</div>`; return; }
+    $("pkat").innerHTML = p.kategorie.map((k) => {
+      const pol = p.polozky.filter((x) => x.kategoria === k.kategoria);
+      const max = Math.max(...pol.map((x) => x.kusy), 1);
+      const pozn = [k.zdarma && k.kategoria === "Pizza" ? `${k.zdarma} zadarmo (3+1)` : "", k.velke ? `${k.velke} veľké` : "", k.menu ? `${k.menu} ako menu` : ""].filter(Boolean).join(", ");
+      return `<div class="kat"><h3><span>${esc(k.kategoria)}</span><span>${ks(k.kusy)}${pozn ? ` <small>· ${pozn}</small>` : ""}</span></h3>` +
+        pol.map((x) => `<div class="pr"><i style="width:${Math.round(x.kusy / max * 100)}%"></i><span>${esc(x.nazov)}${x.zdarma && k.kategoria === "Pizza" ? ` <small>(${x.zdarma} zadarmo)</small>` : ""}</span><b>${x.kusy}</b></div>`).join("") + `</div>`;
+    }).join("");
+  } catch (e) { $("pkat").innerHTML = `<div class="empty">Prehľad sa nepodarilo načítať (${esc(e.message)}).</div>`; }
+}
+$("denPred").onclick = () => { pDen = posun(pDen, -1); nacitajPrehlad(); };
+$("denDalej").onclick = () => { if (pDen < dnes()) { pDen = posun(pDen, 1); nacitajPrehlad(); } };
+setInterval(() => { if (tab === "prehlad" && pDen === dnes() && !document.hidden) nacitajPrehlad(); }, 60000);
 
 // --- štart
 (async () => {
