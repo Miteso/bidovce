@@ -51,6 +51,15 @@
   .den { display:grid; grid-template-columns:52px 1fr 52px; gap:8px; align-items:center; }
   .den button { text-align:center; font-size:22px; font-weight:700; }
   .den b { text-align:center; font-size:18px; }
+  .den button:disabled { opacity:.35; cursor:default; }
+  .datum { position:relative; display:flex; align-items:center; justify-content:center; min-height:52px; border:1px solid var(--line); border-radius:12px; background:var(--card); cursor:pointer; }
+  .datum b::after { content:" ▾"; font-size:13px; color:var(--muted); }
+  .datum input { position:absolute; inset:0; width:100%; height:100%; opacity:0; border:0; padding:0; cursor:pointer; }
+  .spot { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; }
+  .spot h4 { grid-column:1 / -1; margin:0; font-size:13px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); font-weight:700; }
+  .spot b { font-size:20px; display:block; }
+  .spot span { color:var(--muted); font-size:13px; display:block; }
+  .spot p { grid-column:1 / -1; margin:2px 0 0; color:var(--muted); font-size:13px; }
   .kat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:6px 12px 10px; margin-top:10px; }
   .kat h3 { margin:6px 0 6px; font-size:17px; display:flex; justify-content:space-between; gap:8px; }
   .kat h3 small { color:var(--muted); font-weight:400; font-size:14px; }
@@ -75,7 +84,9 @@
 
   <!-- BLOČKY -->
   <section id="t-bloky">
-    <div class="sum" id="sum"></div>
+    <div class="den"><button id="bPred" aria-label="Predošlý deň">‹</button><label class="datum"><b id="bDenText">Dnes</b><input type="date" id="bDatum" aria-label="Vybrať deň"></label><button id="bDalej" aria-label="Ďalší deň">›</button></div>
+    <div class="sum" id="sum" style="margin-top:8px"></div>
+    <div class="spot" id="spot" hidden></div>
     <p class="help" id="bstav" style="margin-top:8px">Načítavam…</p>
     <div id="bloky" style="margin-top:8px"></div>
   </section>
@@ -145,37 +156,77 @@ ukaz(tab);
 // --- BLOČKY (online, obnovuje sa každých 20 s)
 const CERVENE = /^(!!!!|OPRAVA BLOCKU|PLATI TENTO|STARY ZAHODIT|ZRUSENA|OBJEDNAVKA c\.\d|NEPRIPRAVOVAT|NEVOZIT|ZRUSENE:|ZAVOLAT$|ZAKAZNIKOVI$|NEDOKONCENA$|OBJEDNAVKA$|ZMENA$|K OBJEDNAVKE c\.\d|OBJEDNAVKY$)/;
 const VELKE = /^(TEL:|ADRESA:|SPOLU:|DORUCIT DO:|PRIPRAVIT DO:|\*\*\* TEST|NEPRIPRAVOVAT|!! ZAVOLAT|overit )/;
-let videne = null;
+let videne = null, videneDen = null;
+// vybraný deň na záložke Bločky (predvolene dnes; o polnoci sa sám posunie, ak bol vybraný dnešok)
+let bDen = dnes(), bSledujDnes = true;
+const MESIACE = ["január", "február", "marec", "apríl", "máj", "jún", "júl", "august", "september", "október", "november", "december"];
+const minSek = (s) => { s = Math.round(Number(s) || 0); return Math.floor(s / 60) + " min" + (s % 60 ? " " + (s % 60) + " s" : ""); };
+const hovorov = (n) => (n = Number(n) || 0) + (n === 1 ? " hovor" : n >= 2 && n <= 4 ? " hovory" : " hovorov");
+const datumKratko = (d) => { const [y, m, dd] = d.split("-").map(Number); return dd + ".\u00a0" + m + "."; };
+function ukazDenBlokov() {
+  const jeDnes = bDen === dnes();
+  const dt = new Date(bDen + "T12:00:00");
+  $("bDenText").textContent = (jeDnes ? "Dnes, " : "") + dt.toLocaleDateString("sk-SK", { weekday: "short", day: "numeric", month: "numeric", year: "numeric" });
+  $("bDatum").value = bDen; $("bDatum").max = dnes();
+  $("bDalej").disabled = jeDnes;
+}
+function zmenDenBlokov(d) {
+  if (!d || d > dnes()) d = dnes();
+  bDen = d; bSledujDnes = d === dnes();
+  $("bloky").innerHTML = `<div class="empty">Načítavam…</div>`; $("sum").innerHTML = ""; $("spot").hidden = true;
+  ukazDenBlokov(); nacitajBloky();
+}
+$("bPred").onclick = () => zmenDenBlokov(posun(bDen, -1));
+$("bDalej").onclick = () => { if (bDen < dnes()) zmenDenBlokov(posun(bDen, 1)); };
+$("bDatum").onchange = () => zmenDenBlokov($("bDatum").value);
+function ukazSpotrebu(s) {
+  if (!s || !s.den) { $("spot").hidden = true; return; }
+  const jeDnes = bDen === dnes(), m = s.mesiac;
+  const mes = MESIACE[Number(m.od.slice(5, 7)) - 1];
+  $("spot").innerHTML =
+    `<h4>Hovory s agentom</h4>` +
+    `<div><b>${eur(s.den.eur)}</b><span>${jeDnes ? "dnes" : datumKratko(bDen)}</span><span>${hovorov(s.den.hovory)} · ${minSek(s.den.sekundy)}</span></div>` +
+    `<div><b>${eur(m.eur)}</b><span>${mes} spolu (1.–${datumKratko(m.do)})</span><span>${hovorov(m.hovory)} · ${minSek(m.sekundy)}</span></div>` +
+    `<p>Počíta sa ${eur(s.cena_minuty).replace(" €", "")} € za minútu hovoru (podľa skutočnej dĺžky hovorov), každý mesiac od 1. dňa.</p>`;
+  $("spot").hidden = false;
+}
 async function nacitajBloky() {
+  if (bSledujDnes && bDen !== dnes()) { bDen = dnes(); ukazDenBlokov(); }
+  const den = bDen, jeDnes = den === dnes();
   try {
-    const r = await fetch(API + "?k=" + encodeURIComponent(kluc), { cache: "no-store" });
+    const r = await fetch(API + "?k=" + encodeURIComponent(kluc) + "&den=" + den, { cache: "no-store" });
     const d = await r.json();
     if (!d.ok) throw new Error(d.chyba || r.status);
+    if (den !== bDen) return; // medzitým vybraný iný deň
     if (d.pizzeria) { $("nadpis").textContent = "Obsluha – " + d.pizzeria; document.title = "Obsluha – " + d.pizzeria; }
-    const obj = d.objednavky.filter((o) => new Date(o.prijata).toLocaleDateString("sv-SE", tz) === dnes());
+    const obj = d.objednavky;
     try {
-      const p = await (await fetch(API + "?prehlad=1&k=" + encodeURIComponent(kluc), { cache: "no-store" })).json();
-      if (p.ok) {
+      const p = await (await fetch(API + "?prehlad=1&k=" + encodeURIComponent(kluc) + "&den=" + den, { cache: "no-store" })).json();
+      if (p.ok && den === bDen) {
         const piz = (p.kategorie.find((k) => k.kategoria === "Pizza") || {}).kusy || 0;
         $("sum").innerHTML =
           `<div><b>${p.objednavky}</b><span>objednávok</span></div>` +
           `<div><b>${eur(p.trzba)}</b><span>tržba</span></div>` +
           `<div><b>${piz}</b><span>pízz</span></div>` +
           `<div><b>${p.rozvoz} / ${p.odber}</b><span>rozvoz / odber</span></div>`;
+        ukazSpotrebu(p.spotreba);
       }
     } catch (e) {}
-    const nove = videne ? obj.filter((o) => !videne.has(o.id)).map((o) => o.id) : [];
-    videne = new Set(obj.map((o) => o.id));
+    if (den !== bDen) return;
+    const nove = jeDnes && videne && videneDen === den ? obj.filter((o) => !videne.has(o.id)).map((o) => o.id) : [];
+    if (jeDnes) { videne = new Set(obj.map((o) => o.id)); videneDen = den; }
     $("bloky").innerHTML = obj.length ? obj.map((o) => {
       const riadky = esc(o.blocek).split("\n").map((l) => CERVENE.test(l) ? `<span class="red">${l}</span>` : VELKE.test(l) ? `<span class="big">${l}</span>` : l).join("\n");
       const caka = !o.vytlacena && !o.zrusena && o.tlac_od && new Date(o.tlac_od) > new Date();
       const cls = ["bl", o.test ? "test" : "", /!! ZAVOLAT/.test(o.blocek) ? "call" : "", (/OPRAVA BLOCKU/.test(o.blocek) || o.zrusena || o.zmena_k != null) ? "opr" : "", caka ? "caka" : "", nove.includes(o.id) ? "nova" : ""].filter(Boolean).join(" ");
       const znacka = caka ? `<div class="hovor">⏳ Zákazník ešte telefonuje – bloček sa vytlačí hneď po skončení hovoru</div>` : "";
       return `<div class="${cls}">${znacka}<pre>${riadky.trim()}</pre></div>`;
-    }).join("") : `<div class="empty">Dnes zatiaľ žiadne objednávky.</div>`;
+    }).join("") : `<div class="empty">${jeDnes ? "Dnes zatiaľ žiadne objednávky." : "V tento deň neboli žiadne objednávky."}</div>`;
     if (nove.length) pipni();
-    $("bstav").textContent = "Aktualizované " + new Date().toLocaleTimeString("sk-SK") + " · obnovuje sa samo každých 20 s";
-  } catch (e) { $("bstav").textContent = "Chyba načítania bločkov (" + e.message + ")."; }
+    $("bstav").textContent = jeDnes
+      ? "Aktualizované " + new Date().toLocaleTimeString("sk-SK") + " · obnovuje sa samo každých 20 s"
+      : `Bločky z ${datumKratko(den)} (${obj.length}) · na dnešok sa vrátite šípkou › alebo výberom dátumu`;
+  } catch (e) { if (den === bDen) $("bstav").textContent = "Chyba načítania bločkov (" + e.message + ")."; }
 }
 function pipni() {
   try { const a = new (window.AudioContext || window.webkitAudioContext)(); const o = a.createOscillator(); o.frequency.value = 880; o.connect(a.destination); o.start(); setTimeout(() => { o.stop(); a.close(); }, 300); } catch (e) {}
@@ -300,8 +351,9 @@ setInterval(() => { if (tab === "prehlad" && pDen === dnes() && !document.hidden
 // --- štart
 (async () => {
   if (!kluc) { stav("V odkaze chýba kľúč pizzerie.", "err"); return; }
+  ukazDenBlokov();
   nacitajBloky();
-  setInterval(nacitajBloky, 20000);
+  setInterval(() => { if (bSledujDnes) nacitajBloky(); }, 20000);
   try {
     const r = await fetch(API + "?vypredane=1&k=" + encodeURIComponent(kluc), { cache: "no-store" });
     const d = await r.json();
