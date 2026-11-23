@@ -220,9 +220,10 @@ async function nacitajBloky() {
       const caka = !o.vytlacena && !o.zrusena && o.tlac_od && new Date(o.tlac_od) > new Date();
       const cls = ["bl", o.test ? "test" : "", /!! ZAVOLAT/.test(o.blocek) ? "call" : "", (/OPRAVA BLOCKU/.test(o.blocek) || o.zrusena || o.zmena_k != null) ? "opr" : "", caka ? "caka" : "", nove.includes(o.id) ? "nova" : ""].filter(Boolean).join(" ");
       const zlozil = /ZLOZIL PRED DOKONCENIM/i.test(o.poznamka || "");
+      const kedy = caka ? new Date(o.tlac_od).toLocaleTimeString("sk-SK", { timeZone: "Europe/Bratislava", hour: "2-digit", minute: "2-digit" }) : "";
       const znacka = !caka ? "" : zlozil
-        ? `<div class="hovor">⏳ Zákazník zložil pred dokončením – ak do 3 minút nezavolá znova, bloček sa vytlačí sám</div>`
-        : `<div class="hovor">⏳ Zákazník ešte telefonuje – bloček sa vytlačí hneď po skončení hovoru</div>`;
+        ? `<div class="hovor">⏳ Zákazník zložil pred dokončením – ak nezavolá znova, bloček sa vytlačí o ${kedy}</div>`
+        : `<div class="hovor">⏳ Bloček sa vytlačí o ${kedy} – čaká sa, či si zákazník ešte niečo nedoobjedná</div>`;
       return `<div class="${cls}">${znacka}<pre>${riadky.trim()}</pre></div>`;
     }).join("") : `<div class="empty">${jeDnes ? "Dnes zatiaľ žiadne objednávky." : "V tento deň neboli žiadne objednávky."}</div>`;
     if (nove.length) pipni();
