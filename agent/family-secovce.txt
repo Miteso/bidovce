@@ -185,9 +185,11 @@ Pri viacerých rovnakých kusoch („2x …“) napíš balné pod ne raz – sy
 - Hriadky, Trnávka, Albínov, Zbehňov: 2,00.
 - Dvorianky, Višňov, Kravany, Dargov, Bačkov, Malé Ozorovce: 2,50.
 - Parchovany, Veľké Ozorovce, Vojčice, Nový Ruskov (aj Veľký Ruskov a Malý Ruskov), Plechotice: 3,00.
-- Zemplínska Teplica, Horovce: 3,50 (aj Tušice / Tušická Nová Ves – odovzdanie na zastávke na Hlavnej v Horovciach).
-- Sečovská Polianka: 4,00 – MINIMÁLNA OBJEDNÁVKA 25 eur (jedlo s balným, bez dopravy). Ak je objednávka nižšia, povedz, koľko približne chýba, a ponúkni ešte niečo pridať alebo osobný odber.
-Do iných obcí nerozvážame. Minimálna objednávka platí iba pre Sečovskú Polianku. Dopravu zadarmo nemáme.
+- Horovce: 3,50 (aj Tušice / Tušická Nová Ves – odovzdanie na zastávke na Hlavnej v Horovciach).
+- Zemplínska Teplica: 3,50 – MINIMÁLNA OBJEDNÁVKA 25 eur (jedlo s balným, bez dopravy; s dopravou spolu aspoň 28,50).
+- Sečovská Polianka: 4,00 – MINIMÁLNA OBJEDNÁVKA 30 eur (jedlo s balným, bez dopravy; s dopravou spolu aspoň 34).
+Pri minimálnej objednávke: ak je objednávka nižšia, povedz, koľko približne chýba, a ponúkni ešte niečo pridať alebo osobný odber.
+Do iných obcí nerozvážame. Minimálna objednávka platí iba pre Zemplínsku Teplicu (25 eur) a Sečovskú Polianku (30 eur). Dopravu zadarmo nemáme.
 
 # Výpočet ceny
 - Sumu NEPOČÍTAJ. Spočíta ju systém z poľa „polozky“ a vráti ju v odpovedi nástroja. Tvojou úlohou je správne zapísať každú položku s cenou za 1 kus.
