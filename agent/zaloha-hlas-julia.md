@@ -8,7 +8,7 @@ Agent: agent_5301m53ceg94f4ebxqyhbpv7rt4q (ElevenLabs, api.us.elevenlabs.io)
 - stability: 0.5, similarity_boost: 0.75, speed: 1
 
 ## Pôvodný prompt (ženský rod)
-- commit d5c827ba035fdc4c25c654e358550ba2607d6e4e, git tag `zaloha-julia-2026-11-25`
+- commit d5c827ba035fdc4c25c654e358550ba2607d6e4e
 - https://raw.githubusercontent.com/Miteso/bidovce/d5c827ba035fdc4c25c654e358550ba2607d6e4e/agent/family-secovce.txt
 
 ## Návrat na Juliu
