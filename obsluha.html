@@ -221,7 +221,11 @@ async function nacitajBloky() {
       const cls = ["bl", o.test ? "test" : "", /!! ZAVOLAT/.test(o.blocek) ? "call" : "", (/OPRAVA BLOCKU|PLATI TENTO/.test(o.blocek) || o.zrusena || o.zmena_k != null) ? "opr" : "", caka ? "caka" : "", nove.includes(o.id) ? "nova" : ""].filter(Boolean).join(" ");
       const zlozil = /ZLOZIL PRED DOKONCENIM/i.test(o.poznamka || "");
       const kedy = caka ? new Date(o.tlac_od).toLocaleTimeString("sk-SK", { timeZone: "Europe/Bratislava", hour: "2-digit", minute: "2-digit" }) : "";
-      const znacka = !caka ? "" : zlozil
+      // blocek sa drzi, kym zakaznik telefonuje (server: tlac_od o 10 min, po skonceni hovoru koniec + 3,5 min)
+      const telefonuje = caka && new Date(o.tlac_od) - new Date() > 4 * 60 * 1000;
+      const znacka = !caka ? "" : telefonuje
+        ? `<div class="hovor">⏳ Zákazník práve telefonuje – bloček sa vytlačí 3,5 minúty po skončení hovoru</div>`
+        : zlozil
         ? `<div class="hovor">⏳ Zákazník zložil pred dokončením – ak nezavolá znova, bloček sa vytlačí o ${kedy}</div>`
         : `<div class="hovor">⏳ Bloček sa vytlačí o ${kedy} – čaká sa, či si zákazník ešte niečo nedoobjedná</div>`;
       return `<div class="${cls}">${znacka}<pre>${riadky.trim()}</pre></div>`;
