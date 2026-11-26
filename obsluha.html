@@ -218,7 +218,7 @@ async function nacitajBloky() {
     $("bloky").innerHTML = obj.length ? obj.map((o) => {
       const riadky = esc(o.blocek).split("\n").map((l) => CERVENE.test(l) ? `<span class="red">${l}</span>` : VELKE.test(l) ? `<span class="big">${l}</span>` : l).join("\n");
       const caka = !o.vytlacena && !o.zrusena && o.tlac_od && new Date(o.tlac_od) > new Date();
-      const cls = ["bl", o.test ? "test" : "", /!! ZAVOLAT/.test(o.blocek) ? "call" : "", (/OPRAVA BLOCKU/.test(o.blocek) || o.zrusena || o.zmena_k != null) ? "opr" : "", caka ? "caka" : "", nove.includes(o.id) ? "nova" : ""].filter(Boolean).join(" ");
+      const cls = ["bl", o.test ? "test" : "", /!! ZAVOLAT/.test(o.blocek) ? "call" : "", (/OPRAVA BLOCKU|PLATI TENTO/.test(o.blocek) || o.zrusena || o.zmena_k != null) ? "opr" : "", caka ? "caka" : "", nove.includes(o.id) ? "nova" : ""].filter(Boolean).join(" ");
       const zlozil = /ZLOZIL PRED DOKONCENIM/i.test(o.poznamka || "");
       const kedy = caka ? new Date(o.tlac_od).toLocaleTimeString("sk-SK", { timeZone: "Europe/Bratislava", hour: "2-digit", minute: "2-digit" }) : "";
       const znacka = !caka ? "" : zlozil
