@@ -5,7 +5,8 @@ import { chod } from '../lib/router'
 export function Hlavicka({ nadpis, pismo, spat = '/' }: { nadpis: string; pismo?: string; spat?: string }) {
   return (
     <header className="mramor-tien relative z-20">
-      <div className="mramor flex items-center gap-3 px-3 pb-6 pt-2">
+      <div className="mramor px-3 pb-6 pt-2 lg:pb-9 lg:pt-4">
+        <div className="mx-auto flex max-w-6xl items-center gap-3">
         <button
           type="button"
           onClick={() => chod(spat)}
@@ -15,12 +16,13 @@ export function Hlavicka({ nadpis, pismo, spat = '/' }: { nadpis: string; pismo?
           ‹
         </button>
         <a href="#/" aria-label="Family – úvod" className="shrink-0">
-          <img src={logo} alt="Family Restaurant & Caffe" width={52} height={53} className="h-[52px] w-[52px]" />
+          <img src={logo} alt="Family Restaurant & Caffe" width={52} height={53} className="h-[52px] w-[52px] lg:h-[72px] lg:w-[72px]" />
         </a>
         <h1 className="flex min-w-0 items-baseline gap-2">
-          <span className="zlato zlato-mramor zlato-tien truncate text-[1.7rem] font-black uppercase leading-none">{nadpis}</span>
-          {pismo && <span className="font-script text-3xl leading-none text-neutral-700">{pismo}</span>}
+          <span className="zlato zlato-mramor zlato-tien truncate text-[1.7rem] font-black uppercase leading-none lg:text-[2.6rem]">{nadpis}</span>
+          {pismo && <span className="font-script text-3xl leading-none text-neutral-700 lg:text-5xl">{pismo}</span>}
         </h1>
+        </div>
       </div>
     </header>
   )

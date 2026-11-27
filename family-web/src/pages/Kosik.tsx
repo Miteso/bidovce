@@ -149,7 +149,8 @@ export function Kosik({ onUprav }: { onUprav: (r: Riadok) => void }) {
   return (
     <div>
       <Hlavicka nadpis="Košík" pismo={`${v.pocet_kusov} ks`} spat="/menu" />
-      <main className="mx-auto max-w-xl px-3 pb-36 pt-3">
+      <main className="mx-auto max-w-xl px-3 pb-36 pt-3 lg:grid lg:max-w-5xl lg:grid-cols-[1fr_400px] lg:items-start lg:gap-6 lg:pb-16">
+        <div>
         <ul className="space-y-3">
           <AnimatePresence initial={false}>
             {v.riadky.map((x) => {
@@ -188,8 +189,10 @@ export function Kosik({ onUprav }: { onUprav: (r: Riadok) => void }) {
         </a>
 
         <Akcia31 pizz={v.pocet_pizz} />
+        </div>
 
-        <section className="karta mt-4 rounded-2xl p-3.5">
+        <div className="lg:sticky lg:top-4">
+        <section className="karta mt-4 rounded-2xl p-3.5 lg:mt-0">
           <h2 className="mb-3 text-xs font-extrabold uppercase tracking-widest text-jedlo">Kam to bude?</h2>
           <VyberDorucenia />
         </section>
@@ -202,9 +205,13 @@ export function Kosik({ onUprav }: { onUprav: (r: Riadok) => void }) {
             </p>
           )}
         </section>
+        <a href="#/pokladna" className="zlate-tlacidlo mt-4 hidden rounded-full py-4 text-center text-lg font-black uppercase tracking-wide lg:block">
+          Do pokladne · {eur(v.suma)}
+        </a>
+        </div>
       </main>
 
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-zlata/30 bg-[#161616]/95 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur">
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-zlata/30 bg-[#161616]/95 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur lg:hidden">
         <a href="#/pokladna" className="zlate-tlacidlo mx-auto block max-w-md rounded-full py-3.5 text-center text-[1.05rem] font-black uppercase tracking-wide">
           Do pokladne · {eur(v.suma)}
         </a>

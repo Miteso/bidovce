@@ -124,7 +124,8 @@ export function Pokladna() {
     <div>
       <Hlavicka nadpis="Pokladňa" spat="/kosik" />
       <Ukazovatel krok={krok} />
-      <main className="mx-auto max-w-xl px-3 pb-40">
+      <main className="mx-auto max-w-xl px-3 pb-40 lg:grid lg:max-w-5xl lg:grid-cols-[1fr_380px] lg:items-start lg:gap-6 lg:pb-16">
+        <div>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={krok} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.2 }}>
             {krok === 0 && (
@@ -292,10 +293,15 @@ export function Pokladna() {
             )}
           </motion.div>
         </AnimatePresence>
+        </div>
+        <aside className="karta hidden rounded-2xl p-3.5 lg:sticky lg:top-4 lg:block" aria-label="Vaša objednávka">
+          <h3 className="mb-3 text-xs font-extrabold uppercase tracking-widest text-jedlo">Vaša objednávka · {v.pocet_kusov} ks</h3>
+          <Sucet v={v} sposob={k.sposob} obecVybrana={!!obec} />
+        </aside>
       </main>
 
       <div className="fixed inset-x-0 bottom-0 z-40 border-t border-zlata/30 bg-[#161616]/95 px-3 pb-[max(0.6rem,env(safe-area-inset-bottom))] pt-2.5 backdrop-blur">
-        <div className="mx-auto flex max-w-md gap-2.5">
+        <div className="mx-auto flex max-w-md gap-2.5 lg:max-w-xl">
           <button type="button" onClick={spat} className="rounded-full border border-white/20 px-5 text-sm font-bold text-neutral-200">
             Späť
           </button>

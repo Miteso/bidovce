@@ -6,7 +6,7 @@ const tel = (c: string) => `tel:${c.replace(/\s/g, '')}`
 export function Paticka() {
   return (
     <footer className="mt-10 border-t border-zlata/25 bg-black/35 px-5 pb-32 pt-8 text-sm">
-      <div className="mx-auto grid max-w-3xl gap-7 sm:grid-cols-2">
+      <div className="mx-auto grid max-w-6xl gap-7 sm:grid-cols-2 lg:px-3">
         <section>
           <h2 className="mb-2 text-xs font-extrabold uppercase tracking-widest text-jedlo">{nastavenia.nazov}</h2>
           <p>{nastavenia.adresa}</p>
