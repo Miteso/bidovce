@@ -1,0 +1,11 @@
+{
+ "nazov": "Family Restaurant & Caffe",
+ "mesto": "Sečovce",
+ "adresa": "Nám. sv. Cyrila a Metoda 148/36, 078 01 Sečovce",
+ "telefon_objednavky": "055 230 3166",
+ "telefony": ["0915 156 575", "0915 385 008", "0948 503 213"],
+ "otvaracie_hodiny": {"po": ["15:00", "21:30"], "ut": ["15:00", "21:30"], "st": ["15:00", "21:30"], "stv": ["15:00", "21:30"], "pi": ["15:00", "21:30"], "so": ["12:00", "21:30"], "ne": null},
+ "platby": ["Hotovosť", "Karta pri prevzatí", "Stravné lístky"],
+ "odhad_minuty": {"odber": [0, 30], "rozvoz_secovce": [0, 30], "rozvoz_doprava_do_2_50": [45, 60], "rozvoz_doprava_od_3_00": [60, 75]},
+ "demo": true
+}
