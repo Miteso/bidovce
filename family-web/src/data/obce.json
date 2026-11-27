@@ -1,0 +1,31 @@
+{
+ "obce": [
+  {"nazov": "Sečovce", "doprava": 1.0, "min_objednavka": null, "povinna_ulica": true},
+  {"nazov": "Albínov", "doprava": 2.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Hriadky", "doprava": 2.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Trnávka", "doprava": 2.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Zbehňov", "doprava": 2.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Bačkov", "doprava": 2.5, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Dargov", "doprava": 2.5, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Dvorianky", "doprava": 2.5, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Kravany", "doprava": 2.5, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Malé Ozorovce", "doprava": 2.5, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Višňov", "doprava": 2.5, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Nový Ruskov", "doprava": 3.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Parchovany", "doprava": 3.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Plechotice", "doprava": 3.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Veľké Ozorovce", "doprava": 3.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Vojčice", "doprava": 3.0, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Horovce", "doprava": 3.5, "min_objednavka": null, "povinna_ulica": false},
+  {"nazov": "Zemplínska Teplica", "doprava": 3.5, "min_objednavka": 25, "povinna_ulica": false},
+  {"nazov": "Sečovská Polianka", "doprava": 4.0, "min_objednavka": 30, "povinna_ulica": false},
+  {"nazov": "Trebišov", "doprava": 4.0, "min_objednavka": 30, "povinna_ulica": true}
+ ],
+ "casti_secoviec_bez_cisla": ["Hábeš", "Ku škole"],
+ "specialne": [
+  {"nazov": "Tušice", "doprava": 3.5, "poznamka": "odovzdanie na autobusovej zastávke na Hlavnej ulici v Horovciach"},
+  {"nazov": "Tušická Nová Ves", "doprava": 3.5, "poznamka": "odovzdanie na autobusovej zastávke na Hlavnej ulici v Horovciach"}
+ ],
+ "nerozvazame": ["Milhostov", "Stankovce", "Moravany", "Egreš", "Trhovište", "Cabov", "Čeľovce", "Rakovec nad Ondavou", "Košický Klečenov", "Bánovce nad Ondavou", "Slanské Nové Mesto", "Slančík", "Sačurov", "Dlhé Klčovo", "Davidov", "Slivník", "Nižný Žipov", "Kalša", "Ložín", "Zemplínska Nová Ves", "Laškovce", "Nižný Hrušov", "Svinica", "Nižná Kamenica", "Bracovce", "Zemplínske Hradište", "Pozdišovce", "Stanča", "Suché", "Slanec", "Kuzmice"],
+ "ulice": {"Sečovce": ["Albínovská", "Bačkovská", "Bitúnková", "Blatná", "Bottova", "Čižmárska", "Dargovských hrdinov", "Družstevná", "Dukelská", "Fialková", "Gorkého", "Hábeš", "Hodvábna", "Hrnčiarska", "Hviezdoslavova", "J. Horňáka", "Jarná", "Jazmínová", "Klinčeková", "Kochanovská", "Kollárova", "Komenského", "Konvalinková", "Kpt. Jána Nálepku", "Krátka", "Ku škole", "Letná", "M. R. Štefánika", "Mlynská", "Mostová", "Muškátová", "Námestie sv. Cyrila a Metoda", "Narcisová", "Nová doba", "Obchodná", "Okružná", "Orgovánová", "Partizánska", "Plechotická", "Poľná", "Potočná", "Pribinova", "Ružová", "Rybníková", "Sedlárska", "Sládkovičova", "Snežienková", "SNP", "Súdna", "Široká", "Štúrova", "Tulipánová", "Vysoká", "Záhradná", "Zvončeková", "Železničná"]}
+}

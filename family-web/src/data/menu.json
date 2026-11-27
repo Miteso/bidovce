@@ -1,0 +1,77 @@
+{
+  "mena": "EUR",
+  "alergeny_legenda": {"1": "obilniny obsahujúce lepok", "3": "vajcia", "7": "mlieko", "8": "orechy", "9": "zeler", "10": "horčica"},
+  "kategorie": [
+    {"id": "pizza", "nazov": "Pizza", "popis": "malá 500 g · veľká 1000 g"},
+    {"id": "burgre", "nazov": "Burgre", "popis": "MENU VERZIA: + dip + hranolky"},
+    {"id": "snacky", "nazov": "Snacky & wrapy"},
+    {"id": "kridelka", "nazov": "Krídelká & šalát"},
+    {"id": "palacinky", "nazov": "Palacinky"},
+    {"id": "prilohy", "nazov": "Prílohy"},
+    {"id": "omacky", "nazov": "Omáčky"}
+  ],
+  "polozky": [
+    {"id": "sunkova", "kat": "pizza", "nazov": "Šunková", "zlozenie": ["paradajková omáčka", "syr", "šunka", "kukurica"], "alergeny": [1, 7], "cena_mala": 8.00, "cena_velka": 17.00},
+    {"id": "salamova", "kat": "pizza", "nazov": "Salámová", "zlozenie": ["paradajková omáčka", "syr", "saláma", "kukurica"], "alergeny": [1, 7], "cena_mala": 8.30, "cena_velka": 17.60},
+    {"id": "sunkova-quattro", "kat": "pizza", "nazov": "Šunková Quattro", "zlozenie": ["paradajková omáčka", "4 druhy syra", "šunka"], "alergeny": [1, 7], "cena_mala": 9.00, "cena_velka": 19.00},
+    {"id": "quattro", "kat": "pizza", "nazov": "Quattro", "zlozenie": ["paradajková omáčka", "4 druhy syra"], "alergeny": [1, 7], "cena_mala": 8.50, "cena_velka": 18.00},
+    {"id": "quattro-stagioni", "kat": "pizza", "nazov": "Quattro Stagioni", "zlozenie": ["paradajková omáčka", "4 druhy pizze v jednej (Gazdovská, Šunková, Salámová, Quattro)"], "alergeny": [1, 7], "cena_mala": 8.70, "cena_velka": 18.40},
+    {"id": "margherita", "kat": "pizza", "nazov": "Margherita", "zlozenie": ["paradajková omáčka", "syr", "paradajky"], "alergeny": [1, 7], "cena_mala": 7.50, "cena_velka": 16.00},
+    {"id": "hawaii", "kat": "pizza", "nazov": "Hawaii", "zlozenie": ["paradajková omáčka", "syr", "šunka", "ananás"], "alergeny": [1, 7], "cena_mala": 8.60, "cena_velka": 18.20},
+    {"id": "vegetarianska", "kat": "pizza", "nazov": "Vegetariánska", "zlozenie": ["paradajková omáčka", "syr", "paradajka", "paprika", "kukurica", "šampiňóny"], "alergeny": [1, 7], "cena_mala": 8.50, "cena_velka": 18.00},
+    {"id": "bolognese", "kat": "pizza", "nazov": "Bolognese", "zlozenie": ["paradajková omáčka", "syr", "bolognese zmes", "olivy"], "alergeny": [1, 7, 9], "cena_mala": 8.70, "cena_velka": 18.40},
+    {"id": "calzone", "kat": "pizza", "nazov": "Calzone", "zlozenie": ["paradajková omáčka", "syr", "šunka", "kukurica", "šampiňóny", "olivy"], "alergeny": [1, 7], "cena_mala": 8.50, "cena_velka": 18.60},
+    {"id": "kuracia", "kat": "pizza", "nazov": "Kuracia", "zlozenie": ["paradajková omáčka", "syr", "kuracie mäso", "kukurica", "šampiňóny"], "alergeny": [1, 7], "cena_mala": 8.60, "cena_velka": 18.20},
+    {"id": "brokolicova", "kat": "pizza", "nazov": "Brokolicová", "alias_system": "Brocoli Chicken", "zlozenie": ["paradajková omáčka", "syr", "kuracie mäso", "brokolica", "šampiňóny"], "alergeny": [1, 7], "cena_mala": 8.80, "cena_velka": 18.60},
+    {"id": "mexicana", "kat": "pizza", "nazov": "Mexicana", "zlozenie": ["paradajková omáčka", "syr", "saláma", "šampiňóny", "feferóny"], "alergeny": [1, 7], "cena_mala": 8.90, "cena_velka": 18.80},
+    {"id": "bimbo", "kat": "pizza", "nazov": "Bimbo", "zlozenie": ["paradajková omáčka", "syr", "šunka", "slanina", "brokolica", "kukurica", "šampiňóny"], "alergeny": [1, 7], "cena_mala": 9.30, "cena_velka": 19.60},
+    {"id": "gazdovska", "kat": "pizza", "nazov": "Gazdovská", "zlozenie": ["paradajková omáčka", "syr", "slanina", "klobása", "cibuľa", "feferóny"], "alergeny": [1, 7], "cena_mala": 9.00, "cena_velka": 19.00},
+    {"id": "bryndzova-baca", "kat": "pizza", "nazov": "Bryndzová Bača", "zlozenie": ["smotanový základ", "bryndza", "slanina", "saláma", "cibuľa", "kukurica"], "alergeny": [1, 7], "cena_mala": 9.30, "cena_velka": 19.60},
+    {"id": "bbq-chicken", "kat": "pizza", "nazov": "BBQ Chicken", "zlozenie": ["paradajková omáčka", "syr", "kuracie mäso", "kukurica", "cibuľa", "údený syr", "BBQ omáčka"], "alergeny": [1, 7, 10], "cena_mala": 9.20, "cena_velka": 19.40},
+    {"id": "carlos", "kat": "pizza", "nazov": "Carlos", "zlozenie": ["paradajková omáčka", "syr", "saláma", "kukurica", "brokolica", "údený syr"], "alergeny": [1, 7], "cena_mala": 9.10, "cena_velka": 19.20},
+    {"id": "sampinonova", "kat": "pizza", "nazov": "Šampiňónová", "zlozenie": ["paradajková omáčka", "syr", "šunka", "šampiňóny"], "alergeny": [1, 7], "cena_mala": 8.20, "cena_velka": 17.40},
+    {"id": "special", "kat": "pizza", "nazov": "Special", "zlozenie": ["paradajková omáčka", "syr", "šunka", "saláma", "šampiňóny", "olivy", "kukurica", "niva"], "alergeny": [1, 7], "cena_mala": 9.40, "cena_velka": 19.80},
+
+    {"id": "family-signature", "kat": "burgre", "nazov": "Family Signature Smash burger", "zlozenie": ["žemľa", "100% hovädzie mäso", "cheddar", "nakladaná cibuľka", "paradajky", "kyslé uhorky", "šalát", "domáci dresing"], "popis": "Smash z hovädzieho mäsa, cheddar, kyslé uhorky, cibuľa a klasická burger omáčka v maslovej brioche žemli.", "cena": 6.50, "cena_menu": 8.00},
+    {"id": "royal-bbq", "kat": "burgre", "nazov": "Royal BBQ Smash burger", "zlozenie": ["žemľa", "100% hovädzie mäso", "cheddar", "nakladaná cibuľka", "slaninový džem", "BBQ omáčka", "šalát", "pečená slanina", "domáci dresing", "kyslé uhorky"], "popis": "Smash z hovädzieho mäsa s extrémne chrumkavými okrajmi, roztopeným cheddarom, domácim slaninovým džemom, jemne nakladanou červenou cibuľou, sviežim šalátom a našou signature omáčkou v maslovej brioche žemli.", "odporucame": true, "cena": 7.20, "cena_menu": 8.70},
+    {"id": "inferno", "kat": "burgre", "nazov": "Inferno Smash burger", "zlozenie": ["žemľa", "100% hovädzie mäso", "cheddar", "nakladaná cibuľka", "pečená slanina", "šalát", "domáci pikantný dresing", "jalapeño", "sweet chilli"], "cena": 6.90, "cena_menu": 8.40},
+    {"id": "crispy-cheese", "kat": "burgre", "nazov": "Crispy Cheese Smash burger", "zlozenie": ["žemľa", "100% hovädzie mäso", "cheddar", "nakladaná cibuľka", "kyslé uhorky", "šalát", "brusnicový džem", "domáci dresing", "vyprážaný syr v panko strúhanke"], "cena": 7.50, "cena_menu": 9.00},
+    {"id": "crispy-chicken", "kat": "burgre", "nazov": "Crispy Chicken burger", "gramaz": "370 g", "zlozenie": ["vyprážané kuracie prsia v panko strúhanke", "dresing", "šalát", "paradajka", "kyslá uhorka", "cheddar"], "cena": 6.20, "cena_menu": 7.70},
+
+    {"id": "kuracie-stripsy", "kat": "snacky", "nazov": "Kuracie stripsy", "gramaz": "550 g", "alergeny": [1, 3, 7], "zlozenie": ["5 ks kuracie stripsy 400 g", "hranolky 150 g", "dresing 50 ml"], "cena": 8.50, "ma_hranolky": true, "ma_dresing": true},
+    {"id": "sunkovy-toast", "kat": "snacky", "nazov": "Šunkový toast", "gramaz": "350 g", "alergeny": [1, 3, 7], "zlozenie": ["žemľa 85 g", "šunka 30 g", "syr 35 g", "šalát 10 g", "hranolky 150 g", "dresing 50 ml"], "cena": 5.50, "ma_hranolky": true, "ma_dresing": true},
+    {"id": "slaninovy-toast", "kat": "snacky", "nazov": "Slaninový toast", "gramaz": "350 g", "alergeny": [1, 3, 7], "zlozenie": ["žemľa 85 g", "slanina 40 g", "cheddar 35 g", "sweet chilli 10 ml", "šalát 10 g", "hranolky 150 g", "dresing 50 ml"], "cena": 5.80, "ma_hranolky": true, "ma_dresing": true},
+    {"id": "gyros-wrap", "kat": "snacky", "nazov": "Gyros kurací wrap", "gramaz": "450 g", "alergeny": [1, 3, 7], "zlozenie": ["tortilla 1 ks", "kuracie prsia v panko 150 g", "cibuľa", "zelenina", "šalát", "tzatziki dresing 25 ml", "omáčka 50 ml", "hranolky 150 g"], "cena": 7.50, "ma_hranolky": true, "ma_dresing": true},
+    {"id": "mexico-wrap", "kat": "snacky", "nazov": "Mexico wrap", "gramaz": "450 g", "alergeny": [1, 3, 7, 9, 10], "zlozenie": ["tortilla 1 ks", "mleté mäso 150 g", "kukurica 7 g", "fazuľka 10 g", "cibuľa", "šalát", "BBQ dresing 25 ml", "dresing 50 ml", "hranolky 150 g"], "cena": 7.50, "ma_hranolky": true, "ma_dresing": true},
+
+    {"id": "pikantne-kridelka", "kat": "kridelka", "nazov": "Pikantné krídelká", "gramaz": "650 g", "alergeny": [7, 9], "zlozenie": ["marinované krídelká 500 g", "hranolky 150 g", "dresing 50 ml"], "cena": 7.50, "ma_hranolky": true, "ma_dresing": true},
+    {"id": "bbq-kridelka", "kat": "kridelka", "nazov": "BBQ krídelká", "gramaz": "650 g", "alergeny": [7, 9, 10], "zlozenie": ["marinované krídelká 500 g", "hranolky 150 g", "BBQ dresing 20 ml", "dresing 50 ml"], "cena": 7.50, "ma_hranolky": true, "ma_dresing": true},
+    {"id": "caesar-salat", "kat": "kridelka", "nazov": "Caesar šalát", "gramaz": "350 g", "alergeny": [1, 3, 7], "zlozenie": ["kuracie prsia v panko 150 g", "šalát 100 g", "parmezán 50 g", "slaninka 20 g", "Caesar dresing 50 ml", "olej", "soľ", "korenie", "krutóny"], "cena": 9.90},
+
+    {"id": "palacinky-nutella", "kat": "palacinky", "nazov": "Palacinky s Nutellou a šľahačkou", "gramaz": "350 g", "alergeny": [1, 3, 7, 8], "zlozenie": ["3 ks palacinky", "Nutella", "šľahačka", "topping", "práškový cukor"], "cena": 6.50},
+    {"id": "palacinky-dubai", "kat": "palacinky", "nazov": "Palacinky Dubai", "gramaz": "400 g", "alergeny": [1, 3, 7, 8], "zlozenie": ["3 ks palacinky", "pistáciový krém", "čokoládový krém", "opražené kataifi", "čokoládová poleva", "sekané pistácie", "lyofilizované ovocie", "šľahačka"], "cena": 8.50},
+    {"id": "lotus-palacinky", "kat": "palacinky", "nazov": "Lotus cheesecake palacinky", "gramaz": "400 g", "alergeny": [1, 3, 7], "zlozenie": ["3 ks palacinky", "vanilkovo-tvarohový krém", "drvené sušienky Lotus", "Lotus krém", "ovocný topping", "šľahačka"], "cena": 7.50},
+
+    {"id": "hranolky", "kat": "prilohy", "nazov": "Hranolky", "varianty": [{"gramaz": "150 g", "cena": 2.00}, {"gramaz": "250 g", "cena": 3.00}]},
+    {"id": "hranolky-syr", "kat": "prilohy", "nazov": "Hranolky so syrom", "varianty": [{"gramaz": "150 g", "cena": 3.00}, {"gramaz": "250 g", "cena": 4.00}]},
+    {"id": "batatove-hranolky", "kat": "prilohy", "nazov": "Batátové hranolky", "gramaz": "150 g", "cena": 3.50, "syr_navyse": 1.50},
+    {"id": "domace-hranolky", "kat": "prilohy", "nazov": "Domáce hranolky", "gramaz": "150 g", "cena": 3.00},
+    {"id": "americke-zemiaky", "kat": "prilohy", "nazov": "Americké zemiaky", "gramaz": "150 g", "cena": 2.00},
+    {"id": "ryza", "kat": "prilohy", "nazov": "Ryža", "cena": 1.50},
+
+    {"id": "omacka", "kat": "omacky", "nazov": "Omáčka", "gramaz": "50 ml", "cena": 1.50, "druhy": ["BBQ", "slaninová", "cesnaková", "tzatziki", "Caesar", "pikantná", "sweet chilli", "kečup", "tatárska"]}
+  ],
+  "prilohy_na_pizzu": [
+    {"nazov": "Šunka", "cena": 1.50}, {"nazov": "Saláma", "cena": 1.50}, {"nazov": "Klobása", "cena": 1.50}, {"nazov": "Slanina", "cena": 1.50},
+    {"nazov": "Kuracie mäso", "cena": 2.00}, {"nazov": "Syr", "cena": 1.50}, {"nazov": "Údený syr", "cena": 1.80}, {"nazov": "Niva", "cena": 1.80},
+    {"nazov": "Bryndza", "cena": 1.50}, {"nazov": "Kukurica", "cena": 1.00}, {"nazov": "Olivy", "cena": 1.00}, {"nazov": "Cibuľa", "cena": 0.80},
+    {"nazov": "Feferóny", "cena": 0.50}, {"nazov": "Paradajka", "cena": 1.00}, {"nazov": "Paprika", "cena": 1.00}, {"nazov": "Ananás", "cena": 1.00},
+    {"nazov": "Šampiňóny", "cena": 1.00}, {"nazov": "Brokolica", "cena": 1.30}
+  ],
+  "burger_navyse": [
+    {"nazov": "Extra mäso + cheddar", "cena": 2.50}, {"nazov": "Extra cheddar", "cena": 1.00},
+    {"nazov": "Extra slanina", "cena": 0.90}, {"nazov": "Extra omáčka", "cena": 1.50}
+  ],
+  "zamena_hranoliek": [{"nazov": "Batátové hranolky", "cena": 1.00}, {"nazov": "Domáce hranolky", "cena": 1.00}],
+  "balne": {"krabica_mala": 0.50, "krabica_velka": 1.00, "balenie_burger": 0.50, "balenie_jedal": 0.50, "balenie_omacky": 0.30}
+}
