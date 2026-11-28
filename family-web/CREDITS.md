@@ -8,7 +8,7 @@ Všetky fotografie sú výrezy z dodaného jedálneho lístka Family Restaurant 
 | Súbor | Čo to je |
 | --- | --- |
 | `src/assets/logo.png`, `logo.webp`, `public/logo.png` | logo – kruhový odznak vyrezaný z lístka (dočasné, nahradí ho originál) |
-| `src/assets/pizza.webp`, `pizza-mala.webp` | pizza z titulnej strany lístka; miesta zakryté štítkom akcií a burgrom sú doplnené z iných častí tej istej pizze |
+| `src/assets/pizza.webp`, `pizza-mala.webp` | pizza z titulnej strany lístka, vyrezaná bez drevenej dosky; miesta zakryté štítkom akcií a burgrom sú doplnené z iných častí tej istej pizze |
 | `src/assets/burger.webp`, `burger-maly.webp` | Royal BBQ smash burger z titulnej strany lístka |
 | `src/assets/batatove.webp` | batátové hranolky zo strany s burgrami |
 

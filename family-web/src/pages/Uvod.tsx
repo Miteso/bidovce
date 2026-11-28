@@ -93,7 +93,7 @@ export function Uvod() {
           <p className="font-script text-[1.7rem] leading-none text-white">až k tebe domov</p>
         </div>
 
-        <div className="absolute left-1/2 top-[92px] h-[300px] w-[300px] -translate-x-[58%] rounded-full shadow-[0_18px_30px_rgba(0,0,0,0.6)]">
+        <div className="absolute left-1/2 top-[92px] h-[300px] w-[300px] -translate-x-[58%] rounded-full shadow-[0_14px_28px_rgba(0,0,0,0.55)]">
           <img src={pizza} alt="Pizza z našej pece" width={300} height={300} fetchPriority="high" className="toc h-full w-full" />
         </div>
 
