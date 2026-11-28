@@ -51,7 +51,8 @@ export function Potvrdenie({ cislo }: { cislo: string }) {
   return (
     <div>
       <Hlavicka nadpis="Ďakujeme" />
-      <main className="mx-auto max-w-xl px-3 pt-2">
+      <main className="mx-auto max-w-xl px-3 pt-2 lg:grid lg:max-w-[1800px] lg:grid-cols-2 lg:items-start lg:gap-8 lg:px-10">
+        <div>
         <section className="text-center">
           <svg viewBox="0 0 80 80" className="mx-auto h-24 w-24" aria-hidden>
             <motion.circle cx="40" cy="40" r="34" fill="none" stroke="#d4af37" strokeWidth="4" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.6 }} />
@@ -105,7 +106,9 @@ export function Potvrdenie({ cislo }: { cislo: string }) {
           </section>
         )}
 
-        <section className="karta mt-4 rounded-2xl p-3.5">
+        </div>
+        <div>
+        <section className="karta mt-4 rounded-2xl p-3.5 lg:mt-2">
           <h3 className="mb-2 text-xs font-extrabold uppercase tracking-widest text-jedlo">Súhrn</h3>
           <ul className="mb-3 space-y-1.5 text-sm">
             {v.riadky.map((x) => {
@@ -137,6 +140,7 @@ export function Potvrdenie({ cislo }: { cislo: string }) {
         <a href="#/menu" className="mt-5 block rounded-full border border-white/15 py-3 text-center text-sm font-bold text-neutral-200">
           Späť do menu
         </a>
+        </div>
       </main>
       <Paticka />
     </div>

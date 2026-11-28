@@ -6,7 +6,7 @@ const tel = (c: string) => `tel:${c.replace(/\s/g, '')}`
 export function Paticka() {
   return (
     <footer className="mt-10 border-t border-zlata/25 bg-black/35 px-5 pb-32 pt-8 text-sm">
-      <div className="mx-auto grid max-w-6xl gap-7 sm:grid-cols-2 lg:px-3">
+      <div className="mx-auto grid max-w-[1800px] gap-7 sm:grid-cols-2 lg:grid-cols-4 lg:px-7">
         <section>
           <h2 className="mb-2 text-xs font-extrabold uppercase tracking-widest text-jedlo">{nastavenia.nazov}</h2>
           <p>{nastavenia.adresa}</p>
@@ -35,7 +35,7 @@ export function Paticka() {
             ))}
           </dl>
         </section>
-        <section className="sm:col-span-2">
+        <section className="sm:col-span-2 lg:col-span-2">
           <h2 className="mb-2 text-xs font-extrabold uppercase tracking-widest text-jedlo">Alergény</h2>
           <p className="text-xs leading-relaxed text-neutral-300">
             {Object.entries(menu.alergeny_legenda)
@@ -43,7 +43,7 @@ export function Paticka() {
               .join(' · ')}
           </p>
         </section>
-        <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs sm:col-span-2">
+        <nav className="flex flex-wrap gap-x-5 gap-y-2 text-xs sm:col-span-2 lg:col-span-4">
           <a className="py-2 underline decoration-zlata/50 underline-offset-4" href="#/podmienky">
             Obchodné podmienky
           </a>

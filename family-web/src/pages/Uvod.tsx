@@ -61,15 +61,15 @@ export function Uvod() {
       </header>
 
       {/* Pizza a burger ako na jedálnom lístku */}
-      <div className="lg:mx-auto relative z-10 lg:mx-auto lg:-mt-10 lg:grid lg:max-w-6xl lg:grid-cols-[1fr_520px] lg:items-center lg:gap-6 lg:px-8">
+      <div className="lg:mx-auto relative z-10 lg:mx-auto lg:-mt-10 lg:grid lg:max-w-[1800px] lg:grid-cols-2 lg:items-center lg:gap-6 lg:px-10 2xl:px-24">
       <div className="hidden lg:block">
-        <p className="pise w-fit -rotate-[6deg] font-script text-[5rem] leading-[1.15] text-zlata drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)] xl:text-[6rem]">Sme späť!</p>
-        <p className="zlato mt-3 w-fit text-[2rem] font-black leading-none xl:text-[2.6rem]">PIZZA A BURGRE</p>
-        <p className="font-script text-[2.8rem] leading-none text-white xl:text-[3.6rem]">až k tebe domov</p>
-        <p className="mt-4 max-w-md text-base leading-relaxed text-text">
+        <p className="pise w-fit -rotate-[6deg] font-script text-[5rem] leading-[1.15] text-zlata drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)] xl:text-[6rem] min-[1800px]:text-[8rem]">Sme späť!</p>
+        <p className="zlato mt-3 w-fit text-[2rem] font-black leading-none xl:text-[2.6rem] min-[1800px]:text-[3.6rem]">PIZZA A BURGRE</p>
+        <p className="font-script text-[2.8rem] leading-none text-white xl:text-[3.6rem] min-[1800px]:text-[5rem]">až k tebe domov</p>
+        <p className="mt-4 max-w-md text-base leading-relaxed text-text min-[1800px]:max-w-xl min-[1800px]:text-xl">
           Objednajte si online za minútu. Rozvoz {nastavenia.mesto} a okolie, platíte až pri prevzatí.
         </p>
-        <div className="mt-6 flex max-w-lg flex-wrap gap-3">
+        <div className="mt-6 flex max-w-lg flex-wrap gap-3 min-[1800px]:max-w-2xl">
           <a href="#/menu" className="zlate-tlacidlo flex-1 whitespace-nowrap rounded-full px-6 py-4 text-center text-xl font-black uppercase tracking-wide">
             Objednať online
           </a>
@@ -83,8 +83,8 @@ export function Uvod() {
         </p>
         {!stav.otvorene && <p className="mt-2 text-sm text-neutral-300">Objednávky prijímame {kedyPrijimame(nastavenia)}. Objednať sa dá aj vopred na čas.</p>}
       </div>
-      <div className="lg:h-[530px] lg:pt-6">
-      <section className="relative mx-auto -mt-12 h-[452px] max-w-[430px] overflow-x-clip lg:mt-0 lg:origin-top lg:scale-[1.2] lg:overflow-visible" aria-label="Poctivá pizza a smash burger">
+      <div className="lg:h-[530px] lg:pt-6 min-[1800px]:h-[720px]">
+      <section className="relative mx-auto -mt-12 h-[452px] max-w-[430px] overflow-x-clip lg:mt-0 lg:origin-top lg:scale-[1.2] lg:overflow-visible min-[1800px]:scale-[1.6]" aria-label="Poctivá pizza a smash burger">
         <p className="pise absolute left-3 top-1 z-20 lg:hidden -rotate-[9deg] font-script text-[3.5rem] leading-none text-zlata drop-shadow-[0_2px_3px_rgba(0,0,0,0.8)]">
           Sme späť!
         </p>
@@ -136,7 +136,7 @@ export function Uvod() {
         <p className="mt-1 text-xs text-neutral-400">Platíte až pri prevzatí – {nastavenia.platby.join(', ').toLowerCase()}.</p>
       </section>
 
-      <div className="lg:mx-auto lg:grid lg:max-w-6xl lg:grid-cols-2 lg:items-start lg:gap-14 lg:px-8 lg:pt-6">
+      <div className="lg:mx-auto lg:grid lg:max-w-[1800px] lg:grid-cols-2 lg:items-start lg:gap-14 lg:px-10 lg:pt-6 2xl:gap-24 2xl:px-24">
       <section id="akcie" className="mt-10 scroll-mt-4 px-5 lg:px-0">
         <Nadpis zlaty="Akcie" pismo="pre teba" />
         <Akcie />

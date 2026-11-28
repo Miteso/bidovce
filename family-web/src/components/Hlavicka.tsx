@@ -6,7 +6,7 @@ export function Hlavicka({ nadpis, pismo, spat = '/' }: { nadpis: string; pismo?
   return (
     <header className="mramor-tien relative z-20">
       <div className="mramor px-3 pb-6 pt-2 lg:pb-9 lg:pt-4">
-        <div className="mx-auto flex max-w-6xl items-center gap-3">
+        <div className="mx-auto flex max-w-[1800px] items-center gap-3 lg:px-7">
         <button
           type="button"
           onClick={() => chod(spat)}

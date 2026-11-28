@@ -149,9 +149,9 @@ export function Kosik({ onUprav }: { onUprav: (r: Riadok) => void }) {
   return (
     <div>
       <Hlavicka nadpis="Košík" pismo={`${v.pocet_kusov} ks`} spat="/menu" />
-      <main className="mx-auto max-w-xl px-3 pb-36 pt-3 lg:grid lg:max-w-5xl lg:grid-cols-[1fr_400px] lg:items-start lg:gap-6 lg:pb-16">
+      <main className="mx-auto max-w-xl px-3 pb-36 pt-3 lg:grid lg:max-w-[1800px] lg:grid-cols-[1fr_440px] lg:items-start lg:gap-8 lg:px-10 lg:pb-16">
         <div>
-        <ul className="space-y-3">
+        <ul className="grid gap-3 2xl:grid-cols-2">
           <AnimatePresence initial={false}>
             {v.riadky.map((x) => {
               const { nazov, upravy } = popisRiadku(menu, x.riadok)

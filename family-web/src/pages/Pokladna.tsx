@@ -124,7 +124,7 @@ export function Pokladna() {
     <div>
       <Hlavicka nadpis="Pokladňa" spat="/kosik" />
       <Ukazovatel krok={krok} />
-      <main className="mx-auto max-w-xl px-3 pb-40 lg:grid lg:max-w-5xl lg:grid-cols-[1fr_380px] lg:items-start lg:gap-6 lg:pb-16">
+      <main className="mx-auto max-w-xl px-3 pb-40 lg:grid lg:max-w-[1800px] lg:grid-cols-[1fr_440px] lg:items-start lg:gap-8 lg:px-10">
         <div>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={krok} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.2 }}>

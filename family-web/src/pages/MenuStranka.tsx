@@ -62,7 +62,7 @@ export function MenuStranka({ onOtvor }: { onOtvor: (p: Polozka, el: HTMLElement
     <div>
       <Hlavicka nadpis="Menu" pismo="vyber si" />
       <div className="sticky top-0 z-30 -mt-3 border-b border-zlata/25 bg-[#1c1c1c]/95 backdrop-blur">
-        <div className="mx-auto max-w-6xl px-3 pt-3">
+        <div className="mx-auto max-w-[1800px] px-3 pt-3 lg:px-10">
           <label className="relative mx-auto block max-w-xl lg:mx-0">
             <span className="sr-only">Hľadať jedlo alebo surovinu</span>
             <svg viewBox="0 0 24 24" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden>
@@ -78,7 +78,7 @@ export function MenuStranka({ onOtvor }: { onOtvor: (p: Polozka, el: HTMLElement
             />
           </label>
         </div>
-        <div ref={zalozky} role="tablist" aria-label="Kategórie" className="bez-listy mx-auto flex max-w-6xl gap-1 overflow-x-auto px-2">
+        <div ref={zalozky} role="tablist" aria-label="Kategórie" className="bez-listy mx-auto flex max-w-[1800px] gap-1 overflow-x-auto px-2 lg:px-9">
           {menu.kategorie.map((k) => (
             <button
               key={k.id}
@@ -95,7 +95,7 @@ export function MenuStranka({ onOtvor }: { onOtvor: (p: Polozka, el: HTMLElement
         </div>
       </div>
 
-      <main className="mx-auto max-w-6xl px-3 pt-5">
+      <main className="mx-auto max-w-[1800px] px-3 pt-5 lg:px-10">
         {sekcie.length === 0 && <p className="py-16 text-center text-neutral-300">Pre „{hladaj}" sme nič nenašli. Skúste iný názov alebo surovinu.</p>}
         {sekcie.map(({ k, polozky }) => (
           <section key={k.id} data-sekcia={k.id} className="mb-9">
@@ -113,7 +113,7 @@ export function MenuStranka({ onOtvor }: { onOtvor: (p: Polozka, el: HTMLElement
               <div className="ciara-zlata mb-2 flex-1" />
             </div>
             {k.popis && <p className="mb-3 px-1 text-xs font-medium text-neutral-300">{k.popis}</p>}
-            <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {polozky.map((p, i) => (
                 <KartaJedla key={p.id} p={p} index={i} onOtvor={onOtvor} />
               ))}
