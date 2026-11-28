@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "test": "vitest run",
     "preview": "vite preview",
-    "nasadit": "npm run test && npm run build && node skripty/nasadit.mjs"
+    "nasadit": "npm run test && npm run build && node skripty/nasadit.mjs",
+    "fotky": "node skripty/fotky.mjs"
   },
   "dependencies": {
     "@fontsource/allura": "^5.3.0",

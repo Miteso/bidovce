@@ -3,6 +3,14 @@ import pizza from '../assets/pizza-mala.webp'
 import burger from '../assets/burger-maly.webp'
 import batatove from '../assets/batatove.webp'
 
+/** Vlastné fotky jedál: src/assets/jedla/<id>.webp (pripraví ich „npm run fotky"). Majú prednosť pred všetkým ostatným. */
+const VLASTNE = Object.fromEntries(
+  Object.entries(import.meta.glob('../assets/jedla/*.webp', { eager: true, query: '?url', import: 'default' })).map(([cesta, url]) => [
+    cesta.split('/').pop()!.replace('.webp', ''),
+    url as string,
+  ]),
+)
+
 /** Fotky, ktoré máme z jedálneho lístka. Ostatné jedlá dostanú zástupný obrázok v štýle webu. */
 const FOTKY: Record<string, string> = { 'royal-bbq': burger, 'batatove-hranolky': batatove }
 
@@ -52,6 +60,21 @@ const IKONY: Record<string, React.ReactNode> = {
 
 export function Obrazok({ p, index = 0, velkost = 84 }: { p: Polozka; index?: number; velkost?: number }) {
   const styl = { width: velkost, height: velkost }
+  const vlastna = VLASTNE[p.id]
+  if (vlastna) {
+    return (
+      <img
+        src={vlastna}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        width={velkost}
+        height={velkost}
+        className="shrink-0 rounded-full object-cover ring-1 ring-zlata/40 drop-shadow-[0_6px_8px_rgba(0,0,0,0.55)]"
+        style={styl}
+      />
+    )
+  }
   if (p.kat === 'pizza') {
     return (
       <img

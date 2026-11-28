@@ -71,6 +71,12 @@ Telefóny, adresa, otváracie hodiny, spôsoby platby a odhad času (v minútach
 
 Po úprave spustite `npm test` – ak ste zmenili cenu, ktorú používa kontrolný príklad, test na to upozorní.
 
+## Ako pridať fotku jedla
+
+Fotku pomenujte podľa `id` jedla (napr. `sunkova.jpg`), dajte ju do `fotky/` a spustite `npm run fotky`.
+Web ju potom použije namiesto zástupného obrázka. Zoznam súborov a pripravené zadania pre
+generátor obrázkov sú v `FOTKY.md`.
+
 ## Ako je to poskladané
 
 | Kde | Čo |
